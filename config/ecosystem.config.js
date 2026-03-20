@@ -1,0 +1,73 @@
+module.exports = {
+  apps: [
+    {
+      name: 'autolive-backend',
+      script: 'backend/server.js',
+      instances: 2,
+      exec_mode: 'cluster',
+      watch: false,
+      max_memory_restart: '1G',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 5000,
+      },
+      error_file: 'logs/backend-error.log',
+      out_file: 'logs/backend-out.log',
+      log_file: 'logs/backend-combined.log',
+      time: true,
+    },
+    {
+      name: 'autolive-frontend',
+      script: 'frontend/node_modules/next/dist/bin/next',
+      args: 'start',
+      cwd: './frontend',
+      instances: 1,
+      exec_mode: 'fork',
+      watch: false,
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      error_file: 'logs/frontend-error.log',
+      out_file: 'logs/frontend-out.log',
+      log_file: 'logs/frontend-combined.log',
+      time: true,
+    },
+    {
+      name: 'video-worker',
+      script: 'backend/workers/VideoWorker.js',
+      instances: 2,
+      exec_mode: 'cluster',
+      watch: false,
+      env: {
+        NODE_ENV: 'production',
+      },
+      error_file: 'logs/worker-video-error.log',
+      out_file: 'logs/worker-video-out.log',
+    },
+    {
+      name: 'upload-worker',
+      script: 'backend/workers/UploadWorker.js',
+      instances: 2,
+      exec_mode: 'cluster',
+      watch: false,
+      env: {
+        NODE_ENV: 'production',
+      },
+      error_file: 'logs/worker-upload-error.log',
+      out_file: 'logs/worker-upload-out.log',
+    },
+    {
+      name: 'ai-worker',
+      script: 'backend/workers/AIWorker.js',
+      instances: 1,
+      exec_mode: 'fork',
+      watch: false,
+      env: {
+        NODE_ENV: 'production',
+      },
+      error_file: 'logs/worker-ai-error.log',
+      out_file: 'logs/worker-ai-out.log',
+    },
+  ],
+};
