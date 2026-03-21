@@ -13,29 +13,34 @@ echo -e "${BLUE}═════════════════════�
 # Jalankan TypeScript check
 echo -e "${YELLOW}🔍 Running TypeScript check...${NC}\n"
 
-if ./scripts/check-typescript.sh; then
-    echo -e "\n${GREEN}✅ TypeScript check passed!${NC}"
-    
-    # Git add
-    echo -e "\n${YELLOW}📦 Adding files to git...${NC}"
-    git add .
-    
-    # Git commit
-    echo -e "\n${YELLOW}💬 Enter commit message (default: Update code):${NC}"
-    read commit_message
-    
-    if [ -z "$commit_message" ]; then
-        commit_message="Update code"
+if [ -f "scripts/check-typescript.sh" ]; then
+    if ./scripts/check-typescript.sh; then
+        echo -e "\n${GREEN}✅ TypeScript check passed!${NC}"
+        
+        # Git add
+        echo -e "\n${YELLOW}📦 Adding files to git...${NC}"
+        git add .
+        
+        # Git commit
+        echo -e "\n${YELLOW}💬 Enter commit message (default: Update code):${NC}"
+        read commit_message
+        
+        if [ -z "$commit_message" ]; then
+            commit_message="Update code"
+        fi
+        
+        git commit -m "$commit_message"
+        
+        # Git push
+        echo -e "\n${YELLOW}🚀 Pushing to GitHub...${NC}"
+        git push
+        
+        echo -e "\n${GREEN}✅ Successfully pushed to GitHub!${NC}"
+    else
+        echo -e "\n${RED}❌ TypeScript check failed! Please fix errors before pushing.${NC}"
+        exit 1
     fi
-    
-    git commit -m "$commit_message"
-    
-    # Git push
-    echo -e "\n${YELLOW}🚀 Pushing to GitHub...${NC}"
-    git push
-    
-    echo -e "\n${GREEN}✅ Successfully pushed to GitHub!${NC}"
 else
-    echo -e "\n${RED}❌ TypeScript check failed! Please fix errors before pushing.${NC}"
+    echo -e "${RED}❌ scripts/check-typescript.sh not found!${NC}"
     exit 1
 fi

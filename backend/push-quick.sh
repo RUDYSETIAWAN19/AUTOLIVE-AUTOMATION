@@ -9,12 +9,17 @@ echo -e "${BLUE}═════════════════════�
 echo -e "${BLUE}     Quick Push (Skip TypeScript Check)${NC}"
 echo -e "${BLUE}════════════════════════════════════════════${NC}\n"
 
+# Tampilkan status
+echo -e "${YELLOW}📊 Git Status:${NC}"
+git status --short
+echo ""
+
 # Git add
 echo -e "${YELLOW}📦 Adding files to git...${NC}"
 git add .
 
 # Git commit
-echo -e "${YELLOW}💬 Enter commit message:${NC}"
+echo -e "${YELLOW}💬 Enter commit message (default: Quick update):${NC}"
 read commit_message
 
 if [ -z "$commit_message" ]; then
