@@ -1,0 +1,55 @@
+{
+  "login": {
+    "title": "AutoLiveにサインイン",
+    "subtitle": "バイラルコンテンツを自動化",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "button": "サインイン",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "noAccount": "AutoLiveは初めてですか？",
+    "createAccount": "アカウントを作成",
+    "or": "または",
+    "google": "Googleでサインイン",
+    "youtube": "YouTubeでサインイン",
+    "facebook": "Facebookでサインイン",
+    "instagram": "Instagramでサインイン",
+    "tiktok": "TikTokでサインイン",
+    "error": "メールアドレスまたはパスワードが無効です"
+  },
+  "dashboard": {
+    "admin": {
+      "title": "管理者ダッシュボード",
+      "welcome": "お帰りなさい、管理者",
+      "users": "ユーザー管理",
+      "settings": "ウェブサイト設定",
+      "analytics": "分析",
+      "api": "APIキー",
+      "branding": "ブランディング",
+      "upgrade": "アップグレードプラン"
+    },
+    "user": {
+      "title": "ダッシュボード",
+      "welcome": "お帰りなさい",
+      "videos": "私の動画",
+      "automations": "自動化",
+      "analytics": "分析",
+      "profile": "プロフィール",
+      "upgrade": "プロにアップグレード"
+    }
+  },
+  "upgrade": {
+    "title": "プランをアップグレード",
+    "free": "無料",
+    "pro": "プロ",
+    "premium": "プレミアム",
+    "features": {
+      "videos": "1日あたりの動画数",
+      "accounts": "ソーシャルアカウント",
+      "storage": "ストレージ",
+      "ai": "AI機能",
+      "support": "優先サポート"
+    },
+    "subscribe": "購読",
+    "monthly": "/月"
+  }
+}

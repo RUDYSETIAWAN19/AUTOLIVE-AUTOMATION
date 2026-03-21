@@ -1,0 +1,55 @@
+{
+  "login": {
+    "title": "Iniciar sesión en AutoLive",
+    "subtitle": "Automatiza tu contenido viral",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "button": "Iniciar sesión",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿Nuevo en AutoLive?",
+    "createAccount": "Crear una cuenta",
+    "or": "o",
+    "google": "Iniciar sesión con Google",
+    "youtube": "Iniciar sesión con YouTube",
+    "facebook": "Iniciar sesión con Facebook",
+    "instagram": "Iniciar sesión con Instagram",
+    "tiktok": "Iniciar sesión con TikTok",
+    "error": "Correo o contraseña inválidos"
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Panel de Administrador",
+      "welcome": "Bienvenido de nuevo, Administrador",
+      "users": "Gestión de Usuarios",
+      "settings": "Configuración del Sitio",
+      "analytics": "Analíticas",
+      "api": "Claves API",
+      "branding": "Marca",
+      "upgrade": "Planes de Mejora"
+    },
+    "user": {
+      "title": "Panel de Control",
+      "welcome": "Bienvenido de nuevo",
+      "videos": "Mis Videos",
+      "automations": "Automatizaciones",
+      "analytics": "Analíticas",
+      "profile": "Perfil",
+      "upgrade": "Mejorar a Pro"
+    }
+  },
+  "upgrade": {
+    "title": "Mejora tu Plan",
+    "free": "Gratis",
+    "pro": "Pro",
+    "premium": "Premium",
+    "features": {
+      "videos": "Videos por día",
+      "accounts": "Cuentas sociales",
+      "storage": "Almacenamiento",
+      "ai": "Funciones IA",
+      "support": "Soporte prioritario"
+    },
+    "subscribe": "Suscribirse",
+    "monthly": "/mes"
+  }
+}
