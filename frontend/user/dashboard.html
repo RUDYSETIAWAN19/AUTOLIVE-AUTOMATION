@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUTOLIVE - Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0c10;
+            color: #e6edf3;
+        }
+        .header {
+            background: #1f2428;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo img { width: 40px; height: 40px; }
+        .logo h1 { font-size: 20px; letter-spacing: 1px; }
+        .user-info { display: flex; align-items: center; gap: 16px; }
+        .logout-btn {
+            background: #2d333b;
+            border: 1px solid #30363d;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .welcome-card {
+            background: linear-gradient(135deg, #1f6feb, #2ea043);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: #1f2428;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: #2ea043;
+        }
+        .feature-card i { font-size: 32px; margin-bottom: 16px; display: block; }
+        .feature-card h3 { margin-bottom: 8px; }
+        .feature-card p { color: #7d8590; font-size: 14px; }
+        .plan-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .plan-premium { background: #f1c40f; color: #0a0c10; }
+        .plan-pro { background: #2ea043; color: white; }
+        .plan-free { background: #7d8590; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img id="userLogo" src="/assets/logo-default.svg" alt="AUTOLIVE">
+            <h1>AUTOLIVE</h1>
+        </div>
+        <div class="user-info">
+            <span id="userName"></span>
+            <span id="userPlan" class="plan-badge"></span>
+            <button class="logout-btn" onclick="logout()">LOGOUT</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="welcome-card">
+            <h2 id="welcomeMsg">WELCOME BACK!</h2>
+            <p id="userEmail" style="margin-top: 8px;"></p>
+            <p style="margin-top: 16px;">✅ API KEY ACTIVE & VERIFIED</p>
+        </div>
+        <div class="features">
+            <div class="feature-card" onclick="showGuide('auto-schedule')">
+                <i>⚡</i><h3>AUTO SCHEDULE & POST</h3>
+                <p>Schedule your content automatically</p>
+            </div>
+            <div class="feature-card" onclick="showGuide('analytics')">
+                <i>📊</i><h3>REAL-TIME ANALYTICS</h3>
+                <p>Track performance metrics</p>
+            </div>
+            <div class="feature-card" onclick="showGuide('multi-platform')">
+                <i>🔄</i><h3>MULTI-PLATFORM SUPPORT</h3>
+                <p>Connect all your social media</p>
+            </div>
+            <div class="feature-card" onclick="showGuide('ai-content')">
+                <i>🤖</i><h3>AI CONTENT GENERATOR</h3>
+                <p>Generate engaging content with AI</p>
+            </div>
+            <div class="feature-card" onclick="showGuide('team-collab')">
+                <i>👥</i><h3>TEAM COLLABORATION</h3>
+                <p>Work together with your team</p>
+            </div>
+            <div class="feature-card" onclick="showGuide('api-access')">
+                <i>🔌</i><h3>API ACCESS</h3>
+                <p>Integrate with your tools</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const token = localStorage.getItem('token');
+        const apiKey = localStorage.getItem('apiKey');
+        
+        if (!token || !apiKey) {
+            window.location.href = '/login.html';
+        }
+        
+        // Load logo
+        const savedLogo = localStorage.getItem('siteLogo');
+        if (savedLogo) {
+            document.getElementById('userLogo').src = savedLogo;
+        }
+        
+        document.getElementById('userName').textContent = user.name || 'User';
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('welcomeMsg').textContent = `WELCOME BACK, ${(user.name || 'USER').toUpperCase()}!`;
+        
+        const planClass = { premium: 'plan-premium', pro: 'plan-pro', free: 'plan-free' };
+        const planLabel = { premium: 'PREMIUM', pro: 'PRO', free: 'FREE' };
+        document.getElementById('userPlan').textContent = planLabel[user.plan] || 'FREE';
+        document.getElementById('userPlan').className = `plan-badge ${planClass[user.plan] || 'plan-free'}`;
+        
+        function showGuide(guide) {
+            const guides = {
+                'auto-schedule': '📅 Auto Schedule Guide: Set your posts to publish automatically at optimal times. Click "Create Schedule" to get started.',
+                'analytics': '📈 Analytics Guide: Track engagement, reach, and performance metrics in real-time. View detailed reports in Analytics tab.',
+                'multi-platform': '🌐 Multi-Platform Guide: Connect and manage multiple social media accounts from one dashboard. Go to "Connected Accounts" to add platforms.',
+                'ai-content': '🤖 AI Content Guide: Generate engaging content using our advanced AI technology. Try "AI Assistant" in Content Studio.',
+                'team-collab': '👥 Team Collaboration Guide: Invite team members and manage permissions. Visit "Team Settings" to add members.',
+                'api-access': '🔌 API Access Guide: Integrate AutoLive with your existing tools and workflows. Check "API Documentation" for details.'
+            };
+            alert(guides[guide] || 'Guide coming soon! Check documentation for more details.');
+        }
+        
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

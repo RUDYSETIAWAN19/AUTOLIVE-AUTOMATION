@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard · AutoLive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+        }
+        
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: #161b22;
+            border-bottom: 1px solid #30363d;
+            padding: 16px 0;
+            margin-bottom: 32px;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+            color: #2ea043;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .logout-btn {
+            background: #21262d;
+            border: 1px solid #30363d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: #e6edf3;
+            cursor: pointer;
+        }
+        
+        .plan-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .plan-premium {
+            background: #f1c40f;
+            color: #0d1117;
+        }
+        
+        .plan-pro {
+            background: #2ea043;
+            color: white;
+        }
+        
+        .plan-free {
+            background: #7d8590;
+            color: white;
+        }
+        
+        .welcome-card {
+            background: linear-gradient(135deg, #1f6feb 0%, #2ea043 100%);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 24px;
+        }
+        
+        .feature-card i {
+            font-size: 32px;
+            color: #2ea043;
+            margin-bottom: 16px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 8px;
+        }
+        
+        .feature-card p {
+            color: #7d8590;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                <h1>AutoLive</h1>
+            </div>
+            <div class="user-menu">
+                <span id="userName"></span>
+                <span id="userPlan" class="plan-badge"></span>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="dashboard">
+        <div class="welcome-card">
+            <h2 id="welcomeMessage">Welcome back!</h2>
+            <p id="userEmail" style="margin-top: 8px; opacity: 0.9;"></p>
+            <p style="margin-top: 16px;">
+                <i class="fas fa-check-circle"></i> 
+                API Key is active and verified
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Analytics Dashboard</h3>
+                <p>Monitor your automation performance in real-time</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-cogs"></i>
+                <h3>Automation Rules</h3>
+                <p>Create and manage your automation workflows</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-chart-simple"></i>
+                <h3>Usage Statistics</h3>
+                <p>Track your API usage and limits</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5001/api';
+        
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+        
+        function getUser() {
+            return JSON.parse(localStorage.getItem('user') || '{}');
+        }
+        
+        function getApiKey() {
+            return localStorage.getItem('apiKey');
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            localStorage.removeItem('apiKey');
+            window.location.href = '/login.html';
+        }
+        
+        // Check auth
+        const token = getToken();
+        const user = getUser();
+        const apiKey = getApiKey();
+        
+        if (!token || !apiKey) {
+            window.location.href = '/login.html';
+        }
+        
+        // Display user info
+        document.getElementById('userName').textContent = user.name || 'User';
+        document.getElementById('userEmail').textContent = user.email;
+        document.getElementById('welcomeMessage').textContent = `Welcome back, ${user.name || 'User'}!`;
+        
+        const planClass = {
+            premium: 'plan-premium',
+            pro: 'plan-pro',
+            free: 'plan-free'
+        };
+        
+        const planLabel = {
+            premium: 'PREMIUM',
+            pro: 'PRO',
+            free: 'FREE'
+        };
+        
+        const userPlan = document.getElementById('userPlan');
+        userPlan.textContent = planLabel[user.plan] || 'FREE';
+        userPlan.className = `plan-badge ${planClass[user.plan] || 'plan-free'}`;
+    </script>
+</body>
+</html>

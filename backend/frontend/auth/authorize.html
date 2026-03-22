@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorize · AutoLive Automation</title>
+    <link rel="stylesheet" href="../css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .api-key-input {
+            font-family: monospace;
+            letter-spacing: 1px;
+        }
+        
+        .social-user-card {
+            background: #21262d;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            border: 1px solid #30363d;
+        }
+        
+        .social-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 28px;
+        }
+        
+        .social-icon.google { background: #ea4335; }
+        .social-icon.facebook { background: #1877f2; }
+        .social-icon.github { background: #333; }
+        
+        .info-text {
+            background: rgba(88, 166, 255, 0.1);
+            border: 1px solid #58a6ff;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 13px;
+            margin-top: 16px;
+        }
+        
+        .info-text i {
+            color: #58a6ff;
+            margin-right: 8px;
+        }
+        
+        .btn-secondary {
+            background: #21262d;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 12px;
+            width: 100%;
+        }
+        
+        .btn-secondary:hover {
+            background: #30363d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-card">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i>
+                <h1>Authorization Required</h1>
+            </div>
+            
+            <div id="socialUserInfo" class="social-user-card">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+            
+            <form id="authorizeForm" class="login-form">
+                <div class="form-group">
+                    <label for="apiKey">
+                        <i class="fas fa-key"></i> API Key
+                    </label>
+                    <input type="password" id="apiKey" class="api-key-input" 
+                           placeholder="Enter your API key" required>
+                    <small style="color: #7d8590; display: block; margin-top: 8px;">
+                        <i class="fas fa-info-circle"></i> 
+                        Your API key is required to use AutoLive services
+                    </small>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <i class="fas fa-check-circle"></i> Verify & Continue
+                </button>
+                
+                <button type="button" class="btn-secondary" id="backBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Login
+                </button>
+            </form>
+            
+            <div class="info-text">
+                <i class="fas fa-lock"></i>
+                Your API key is encrypted and stored securely
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5001/api';
+        
+        // Get provider from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const provider = urlParams.get('provider') || 'Unknown';
+        
+        // Get social login data
+        const socialData = JSON.parse(localStorage.getItem('socialLoginData') || '{}');
+        
+        // Display social user info
+        const socialUserInfo = document.getElementById('socialUserInfo');
+        
+        const providerColors = {
+            Google: 'google',
+            Facebook: 'facebook',
+            GitHub: 'github'
+        };
+        
+        const providerIcons = {
+            Google: 'fab fa-google',
+            Facebook: 'fab fa-facebook-f',
+            GitHub: 'fab fa-github'
+        };
+        
+        socialUserInfo.innerHTML = `
+            <div class="social-icon ${providerColors[provider] || ''}">
+                <i class="${providerIcons[provider] || 'fas fa-user'}"></i>
+            </div>
+            <h3 style="margin-bottom: 8px;">${socialData.name || 'User'}</h3>
+            <p style="color: #7d8590; margin-bottom: 4px;">${socialData.email || 'No email provided'}</p>
+            <p style="color: #2ea043; font-size: 12px; margin-top: 8px;">
+                <i class="fab fa-${provider.toLowerCase()}"></i> Connected with ${provider}
+            </p>
+        `;
+        
+        // Handle authorization form
+        const authorizeForm = document.getElementById('authorizeForm');
+        
+        authorizeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const apiKey = document.getElementById('apiKey').value;
+            const submitBtn = document.getElementById('submitBtn');
+            
+            if (!apiKey) {
+                showAlert('Please enter your API key', 'error');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            
+            try {
+                // Verify API key with backend
+                const response = await fetch(`${API_URL}/auth/verify-api-key`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: socialData.email,
+                        provider: provider,
+                        apiKey: apiKey
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Save API key and complete login
+                    localStorage.setItem('apiKey', apiKey);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    localStorage.setItem('token', data.token);
+                    
+                    showAlert('API key verified! Redirecting to dashboard...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/user/dashboard.html';
+                    }, 1500);
+                } else {
+                    showAlert(data.message || 'Invalid API key', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify & Continue';
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                showAlert('Network error. Please try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Verify & Continue';
+            }
+        });
+        
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            window.location.href = '/login.html';
+        });
+        
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert ${type}`;
+            alertDiv.textContent = message;
+            
+            const loginCard = document.querySelector('.login-card');
+            const form = document.getElementById('authorizeForm');
+            loginCard.insertBefore(alertDiv, form);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

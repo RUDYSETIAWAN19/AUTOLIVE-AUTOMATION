@@ -34,3 +34,9 @@ dist/
 build/
 .next/
 out/
+
+# TypeScript check logs
+typescript-errors.log
+typescript-check.log
+typescript-report.txt
+*.tsbuildinfo

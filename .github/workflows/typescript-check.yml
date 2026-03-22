@@ -1,0 +1,27 @@
+name: TypeScript Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install Backend Dependencies
+      working-directory: ./backend
+      run: npm install
+    
+    - name: Run TypeScript Check
+      working-directory: ./backend
+      run: npx tsc --noEmit

@@ -1,0 +1,20 @@
+{
+  "name": "autolive-automation",
+  "version": "1.0.0",
+  "description": "AutoLive Automation - Full Stack Application",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "type-check": "./scripts/check-typescript.sh",
+    "type-check:watch": "cd backend && npx tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "concurrently": "^8.2.2",
+    "husky": "^9.1.7",
+    "typescript": "^5.9.3"
+  }
+}
