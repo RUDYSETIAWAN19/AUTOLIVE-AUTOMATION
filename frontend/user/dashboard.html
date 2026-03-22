@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AUTOLIVE - Dashboard</title>
+    <title>AUTOLIVE - User Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: #0a0c10;
             color: #e6edf3;
         }
+        
+        /* Header */
         .header {
             background: #1f2428;
             border-bottom: 1px solid #30363d;
@@ -18,141 +27,589 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .logo { display: flex; align-items: center; gap: 12px; }
-        .logo img { width: 40px; height: 40px; }
-        .logo h1 { font-size: 20px; letter-spacing: 1px; }
-        .user-info { display: flex; align-items: center; gap: 16px; }
-        .logout-btn {
-            background: #2d333b;
-            border: 1px solid #30363d;
-            padding: 6px 12px;
-            border-radius: 6px;
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-        .welcome-card {
-            background: linear-gradient(135deg, #1f6feb, #2ea043);
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 32px;
+        
+        .logo img {
+            width: 40px;
+            height: 40px;
         }
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        
+        .logo h1 {
+            font-size: 20px;
+            letter-spacing: 1px;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
             gap: 20px;
         }
-        .feature-card {
-            background: #1f2428;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 24px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .feature-card:hover {
-            transform: translateY(-2px);
-            border-color: #2ea043;
-        }
-        .feature-card i { font-size: 32px; margin-bottom: 16px; display: block; }
-        .feature-card h3 { margin-bottom: 8px; }
-        .feature-card p { color: #7d8590; font-size: 14px; }
+        
         .plan-badge {
             display: inline-block;
             padding: 4px 12px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
-        .plan-premium { background: #f1c40f; color: #0a0c10; }
-        .plan-pro { background: #2ea043; color: white; }
-        .plan-free { background: #7d8590; color: white; }
+        
+        .plan-premium {
+            background: #f1c40f;
+            color: #0a0c10;
+        }
+        
+        .plan-pro {
+            background: #2ea043;
+            color: white;
+        }
+        
+        .plan-free {
+            background: #7d8590;
+            color: white;
+        }
+        
+        .logout-btn {
+            background: #2d333b;
+            border: 1px solid #30363d;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: #e6edf3;
+        }
+        
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, #1f6feb, #2ea043);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+        }
+        
+        .welcome-banner h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: #1f2428;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #2ea043;
+        }
+        
+        .stat-card h3 {
+            font-size: 13px;
+            color: #7d8590;
+            margin-bottom: 8px;
+        }
+        
+        .stat-number {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2ea043;
+        }
+        
+        /* Section */
+        .section {
+            background: #1f2428;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .section h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-card {
+            background: #2d333b;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-2px);
+            border-color: #2ea043;
+        }
+        
+        .feature-card i {
+            font-size: 32px;
+            margin-bottom: 16px;
+            display: block;
+            color: #2ea043;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 8px;
+        }
+        
+        .feature-card p {
+            color: #7d8590;
+            font-size: 13px;
+        }
+        
+        /* Video List */
+        .video-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        .video-item:last-child {
+            border-bottom: none;
+        }
+        
+        .video-title {
+            font-weight: 500;
+        }
+        
+        .video-views {
+            color: #7d8590;
+            font-size: 12px;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+        
+        .status-completed {
+            background: #2ea043;
+        }
+        
+        .status-processing {
+            background: #f1c40f;
+            color: #0a0c10;
+        }
+        
+        .status-scheduled {
+            background: #58a6ff;
+        }
+        
+        /* Channel Item */
+        .channel-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #30363d;
+        }
+        
+        .channel-info h4 {
+            margin-bottom: 4px;
+        }
+        
+        .channel-stats {
+            font-size: 12px;
+            color: #7d8590;
+        }
+        
+        .btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: #2ea043;
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #30363d;
+            color: #e6edf3;
+        }
+        
+        /* Alert */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .alert-success {
+            background: #2ea043;
+            color: white;
+        }
+        
+        .alert-error {
+            background: #f85149;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">
-            <img id="userLogo" src="/assets/logo-default.svg" alt="AUTOLIVE">
+        <div class="logo" id="logoBtn">
+            <img id="userLogo" src="https://via.placeholder.com/40?text=🤖" alt="AUTOLIVE">
             <h1>AUTOLIVE</h1>
         </div>
-        <div class="user-info">
-            <span id="userName"></span>
+        <div class="user-menu">
             <span id="userPlan" class="plan-badge"></span>
-            <button class="logout-btn" onclick="logout()">LOGOUT</button>
+            <span id="userName"></span>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
         </div>
     </div>
+    
     <div class="container">
-        <div class="welcome-card">
-            <h2 id="welcomeMsg">WELCOME BACK!</h2>
-            <p id="userEmail" style="margin-top: 8px;"></p>
-            <p style="margin-top: 16px;">✅ API KEY ACTIVE & VERIFIED</p>
+        <div class="welcome-banner">
+            <h2 id="welcomeMsg">Welcome back!</h2>
+            <p id="userEmail"></p>
+            <p style="margin-top: 12px;">✅ API Key Active | Auto Content Machine Ready</p>
         </div>
-        <div class="features">
-            <div class="feature-card" onclick="showGuide('auto-schedule')">
-                <i>⚡</i><h3>AUTO SCHEDULE & POST</h3>
-                <p>Schedule your content automatically</p>
+        
+        <div class="stats-grid" id="statsGrid">
+            <!-- Stats will be loaded here -->
+        </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-fire"></i> Viral Discovery</h2>
+            <div class="cards-grid">
+                <div class="feature-card" onclick="searchViral()">
+                    <i class="fas fa-search"></i>
+                    <h3>Search Viral Content</h3>
+                    <p>Find trending videos by keyword, niche, or region</p>
+                </div>
+                <div class="feature-card" onclick="analyzeAI()">
+                    <i class="fas fa-brain"></i>
+                    <h3>AI Viral Predictor</h3>
+                    <p>Get viral score prediction (0-100) for any content</p>
+                </div>
+                <div class="feature-card" onclick="bookmarkContent()">
+                    <i class="fas fa-bookmark"></i>
+                    <h3>Bookmarked Content</h3>
+                    <p>Save viral videos for later processing</p>
+                </div>
             </div>
-            <div class="feature-card" onclick="showGuide('analytics')">
-                <i>📊</i><h3>REAL-TIME ANALYTICS</h3>
-                <p>Track performance metrics</p>
+        </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-download"></i> Content Processing</h2>
+            <div class="cards-grid">
+                <div class="feature-card" onclick="downloadVideo()">
+                    <i class="fas fa-download"></i>
+                    <h3>Video Downloader</h3>
+                    <p>Download from YouTube, TikTok (No watermark)</p>
+                </div>
+                <div class="feature-card" onclick="editVideo()">
+                    <i class="fas fa-cut"></i>
+                    <h3>Auto Editor</h3>
+                    <p>Auto clip, add subtitles, convert to vertical</p>
+                </div>
+                <div class="feature-card" onclick="uploadVideo()">
+                    <i class="fas fa-upload"></i>
+                    <h3>Auto Upload</h3>
+                    <p>Schedule and upload to multiple platforms</p>
+                </div>
             </div>
-            <div class="feature-card" onclick="showGuide('multi-platform')">
-                <i>🔄</i><h3>MULTI-PLATFORM SUPPORT</h3>
-                <p>Connect all your social media</p>
+        </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-project-diagram"></i> Automation Workflows</h2>
+            <div class="cards-grid">
+                <div class="feature-card" onclick="createWorkflow()">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Create Workflow</h3>
+                    <p>Build custom automation: Viral → Download → Edit → Upload</p>
+                </div>
+                <div class="feature-card" onclick="manageWorkflows()">
+                    <i class="fas fa-list"></i>
+                    <h3>My Workflows</h3>
+                    <p>View and manage your automation workflows</p>
+                </div>
+                <div class="feature-card" onclick="workflowTemplates()">
+                    <i class="fas fa-copy"></i>
+                    <h3>Templates</h3>
+                    <p>Use pre-built workflow templates</p>
+                </div>
             </div>
-            <div class="feature-card" onclick="showGuide('ai-content')">
-                <i>🤖</i><h3>AI CONTENT GENERATOR</h3>
-                <p>Generate engaging content with AI</p>
-            </div>
-            <div class="feature-card" onclick="showGuide('team-collab')">
-                <i>👥</i><h3>TEAM COLLABORATION</h3>
-                <p>Work together with your team</p>
-            </div>
-            <div class="feature-card" onclick="showGuide('api-access')">
-                <i>🔌</i><h3>API ACCESS</h3>
-                <p>Integrate with your tools</p>
-            </div>
+        </div>
+        
+        <div class="section">
+            <h2><i class="fas fa-chart-line"></i> Recent Videos</h2>
+            <div id="recentVideos"></div>
+        </div>
+        
+        <div class="section">
+            <h2><i class="fab fa-youtube"></i> Connected Channels</h2>
+            <div id="channelsList"></div>
+            <button class="btn btn-outline" onclick="addChannel()" style="margin-top: 16px;">
+                <i class="fas fa-plus"></i> Add Channel
+            </button>
         </div>
     </div>
+    
+    <div id="alert" class="alert"></div>
+    
     <script>
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        const token = localStorage.getItem('token');
-        const apiKey = localStorage.getItem('apiKey');
+        const API_URL = 'http://localhost:5001';
+        let currentUser = null;
         
-        if (!token || !apiKey) {
-            window.location.href = '/login.html';
-        }
-        
-        // Load logo
-        const savedLogo = localStorage.getItem('siteLogo');
-        if (savedLogo) {
-            document.getElementById('userLogo').src = savedLogo;
-        }
-        
-        document.getElementById('userName').textContent = user.name || 'User';
-        document.getElementById('userEmail').textContent = user.email;
-        document.getElementById('welcomeMsg').textContent = `WELCOME BACK, ${(user.name || 'USER').toUpperCase()}!`;
-        
-        const planClass = { premium: 'plan-premium', pro: 'plan-pro', free: 'plan-free' };
-        const planLabel = { premium: 'PREMIUM', pro: 'PRO', free: 'FREE' };
-        document.getElementById('userPlan').textContent = planLabel[user.plan] || 'FREE';
-        document.getElementById('userPlan').className = `plan-badge ${planClass[user.plan] || 'plan-free'}`;
-        
-        function showGuide(guide) {
-            const guides = {
-                'auto-schedule': '📅 Auto Schedule Guide: Set your posts to publish automatically at optimal times. Click "Create Schedule" to get started.',
-                'analytics': '📈 Analytics Guide: Track engagement, reach, and performance metrics in real-time. View detailed reports in Analytics tab.',
-                'multi-platform': '🌐 Multi-Platform Guide: Connect and manage multiple social media accounts from one dashboard. Go to "Connected Accounts" to add platforms.',
-                'ai-content': '🤖 AI Content Guide: Generate engaging content using our advanced AI technology. Try "AI Assistant" in Content Studio.',
-                'team-collab': '👥 Team Collaboration Guide: Invite team members and manage permissions. Visit "Team Settings" to add members.',
-                'api-access': '🔌 API Access Guide: Integrate AutoLive with your existing tools and workflows. Check "API Documentation" for details.'
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            
+            currentUser = JSON.parse(user);
+            if (currentUser.role === 'admin') {
+                window.location.href = '/admin/dashboard.html';
+                return false;
+            }
+            
+            // Load logo
+            const savedLogo = localStorage.getItem('siteLogo');
+            if (savedLogo) {
+                document.getElementById('userLogo').src = savedLogo;
+            }
+            
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('welcomeMsg').textContent = `Welcome back, ${currentUser.name}!`;
+            
+            const planClass = {
+                premium: 'plan-premium',
+                pro: 'plan-pro',
+                free: 'plan-free'
             };
-            alert(guides[guide] || 'Guide coming soon! Check documentation for more details.');
+            const planLabel = {
+                premium: 'PREMIUM',
+                pro: 'PRO',
+                free: 'FREE'
+            };
+            document.getElementById('userPlan').textContent = planLabel[currentUser.plan] || 'FREE';
+            document.getElementById('userPlan').className = `plan-badge ${planClass[currentUser.plan] || 'plan-free'}`;
+            
+            return true;
+        }
+        
+        function showAlert(message, type) {
+            const alertDiv = document.getElementById('alert');
+            alertDiv.textContent = message;
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.style.display = 'block';
+            setTimeout(() => {
+                alertDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        async function fetchWithAuth(url, options = {}) {
+            const token = localStorage.getItem('token');
+            const response = await fetch(url, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    ...options.headers
+                }
+            });
+            
+            if (response.status === 401) {
+                logout();
+            }
+            
+            return response;
+        }
+        
+        async function loadDashboard() {
+            try {
+                const response = await fetchWithAuth(`${API_URL}/api/user/stats`);
+                const data = await response.json();
+                
+                if (response.ok && data.stats) {
+                    const stats = data.stats;
+                    const statsGrid = document.getElementById('statsGrid');
+                    statsGrid.innerHTML = `
+                        <div class="stat-card">
+                            <h3>Videos Processed</h3>
+                            <div class="stat-number">${stats.videosProcessed}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Channels</h3>
+                            <div class="stat-number">${stats.activeChannels}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>API Calls This Month</h3>
+                            <div class="stat-number">${stats.apiCallsThisMonth}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Storage Used</h3>
+                            <div class="stat-number">${stats.storageUsed}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Active Workflows</h3>
+                            <div class="stat-number">${stats.totalWorkflows}</div>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Viral Score</h3>
+                            <div class="stat-number">${stats.viralScore}</div>
+                            <div class="stat-trend trend-up">${stats.engagement} engagement</div>
+                        </div>
+                    `;
+                }
+                
+                // Load recent videos
+                if (data.recentVideos) {
+                    const recentVideosDiv = document.getElementById('recentVideos');
+                    recentVideosDiv.innerHTML = data.recentVideos.map(video => `
+                        <div class="video-item">
+                            <div>
+                                <div class="video-title">${video.title}</div>
+                                <div class="video-views">${video.views} views</div>
+                            </div>
+                            <span class="status-badge status-${video.status}">${video.status.toUpperCase()}</span>
+                        </div>
+                    `).join('');
+                }
+                
+                // Load channels
+                if (data.channels) {
+                    const channelsDiv = document.getElementById('channelsList');
+                    channelsDiv.innerHTML = data.channels.map(channel => `
+                        <div class="channel-item">
+                            <div class="channel-info">
+                                <h4>${channel.name}</h4>
+                                <div class="channel-stats">${channel.subscribers || channel.followers} followers</div>
+                            </div>
+                            <span class="status-badge status-${channel.status}">${channel.status.toUpperCase()}</span>
+                        </div>
+                    `).join('');
+                }
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Error loading dashboard data', 'error');
+            }
+        }
+        
+        function searchViral() {
+            showAlert('🔍 Viral Discovery: Search for trending content by keyword or niche', 'success');
+        }
+        
+        function analyzeAI() {
+            showAlert('🧠 AI Viral Predictor: Enter video URL to get viral score prediction', 'success');
+        }
+        
+        function bookmarkContent() {
+            showAlert('📑 Bookmarked Content: View your saved viral videos', 'success');
+        }
+        
+        function downloadVideo() {
+            showAlert('⬇️ Video Downloader: Enter YouTube/TikTok URL to download', 'success');
+        }
+        
+        function editVideo() {
+            showAlert('✂️ Auto Editor: Upload video for automatic editing', 'success');
+        }
+        
+        function uploadVideo() {
+            showAlert('📤 Auto Upload: Select video and platform for upload', 'success');
+        }
+        
+        function createWorkflow() {
+            showAlert('⚙️ Create Workflow: Build your automation pipeline', 'success');
+        }
+        
+        function manageWorkflows() {
+            showAlert('📋 My Workflows: View and manage your workflows', 'success');
+        }
+        
+        function workflowTemplates() {
+            showAlert('📄 Workflow Templates: Choose from pre-built templates', 'success');
+        }
+        
+        function addChannel() {
+            showAlert('➕ Add Channel: Connect YouTube or TikTok account', 'success');
         }
         
         function logout() {
             localStorage.clear();
             window.location.href = '/login.html';
+        }
+        
+        // Logo click to change
+        document.getElementById('logoBtn').addEventListener('click', () => {
+            const url = prompt('Enter logo image URL:', localStorage.getItem('siteLogo') || '');
+            if (url) {
+                localStorage.setItem('siteLogo', url);
+                document.getElementById('userLogo').src = url;
+                showAlert('Logo updated!', 'success');
+            }
+        });
+        
+        // Initialize
+        if (checkAuth()) {
+            loadDashboard();
         }
     </script>
 </body>
