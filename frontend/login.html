@@ -5,14 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AUTOLIVE - Login</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0a0c10;
             min-height: 100vh;
             display: flex;
@@ -20,15 +15,12 @@
             justify-content: center;
             position: relative;
         }
-
-        /* Language Selector */
         .lang-selector {
             position: absolute;
             top: 20px;
             right: 20px;
             z-index: 100;
         }
-
         .lang-btn {
             background: #1f2428;
             border: 1px solid #30363d;
@@ -40,13 +32,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-family: inherit;
         }
-
-        .lang-btn:hover {
-            background: #2d333b;
-        }
-
         .lang-dropdown {
             position: absolute;
             top: 100%;
@@ -58,11 +44,7 @@
             min-width: 160px;
             display: none;
         }
-
-        .lang-dropdown.show {
-            display: block;
-        }
-
+        .lang-dropdown.show { display: block; }
         .lang-option {
             display: block;
             padding: 8px 12px;
@@ -71,66 +53,20 @@
             font-size: 13px;
             cursor: pointer;
         }
-
-        .lang-option:hover {
-            background: #2d333b;
-        }
-
-        .lang-option.active {
-            color: #2ea043;
-        }
-
-        /* Login Card */
+        .lang-option:hover { background: #2d333b; }
         .login-card {
             background: #1f2428;
             border-radius: 12px;
             padding: 40px;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             border: 1px solid #30363d;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
         }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 32px;
-            cursor: pointer;
-        }
-
-        .logo img {
-            max-width: 80px;
-            height: auto;
-            margin-bottom: 12px;
-        }
-
-        .logo h1 {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            color: #e6edf3;
-            margin-top: 12px;
-        }
-
-        .login-card h2 {
-            text-align: center;
-            font-size: 20px;
-            font-weight: 500;
-            margin-bottom: 24px;
-            color: #e6edf3;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #e6edf3;
-        }
-
+        .logo { text-align: center; margin-bottom: 32px; cursor: pointer; }
+        .logo img { max-width: 80px; margin-bottom: 12px; }
+        .logo h1 { font-size: 32px; font-weight: 800; letter-spacing: 2px; color: #e6edf3; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 500; color: #e6edf3; }
         .form-group input {
             width: 100%;
             padding: 10px 12px;
@@ -140,12 +76,6 @@
             color: #e6edf3;
             font-size: 14px;
         }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #2ea043;
-        }
-
         .btn-primary {
             width: 100%;
             padding: 12px;
@@ -153,45 +83,22 @@
             border: none;
             border-radius: 6px;
             color: white;
-            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 8px;
         }
-
-        .btn-primary:hover {
-            background: #3fb950;
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        /* Footer Links - Below Login Button */
         .auth-links {
             display: flex;
             justify-content: space-between;
             margin-top: 16px;
             margin-bottom: 24px;
         }
-
-        .auth-links a {
-            color: #2ea043;
-            text-decoration: none;
-            font-size: 13px;
-        }
-
-        .auth-links a:hover {
-            text-decoration: underline;
-        }
-
+        .auth-links a { color: #2ea043; text-decoration: none; font-size: 13px; }
         .divider {
             text-align: center;
             margin: 24px 0;
             position: relative;
         }
-
         .divider::before {
             content: '';
             position: absolute;
@@ -201,7 +108,6 @@
             height: 1px;
             background: #30363d;
         }
-
         .divider span {
             background: #1f2428;
             padding: 0 12px;
@@ -209,14 +115,12 @@
             font-size: 12px;
             position: relative;
         }
-
         .social-login {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
             margin-bottom: 32px;
         }
-
         .btn-social {
             display: flex;
             align-items: center;
@@ -228,69 +132,9 @@
             border-radius: 6px;
             color: #e6edf3;
             font-size: 13px;
-            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
         }
-
-        .btn-social:hover {
-            background: #3d444d;
-            transform: translateY(-1px);
-        }
-
-        .btn-social img {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Features Section - Full Description */
-        .features-section {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #30363d;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .features-section h4 {
-            color: #2ea043;
-            font-size: 14px;
-            margin-bottom: 16px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .feature-category {
-            margin-bottom: 20px;
-        }
-
-        .feature-category h5 {
-            color: #e6edf3;
-            font-size: 13px;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .feature-category ul {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-        }
-
-        .feature-category li {
-            font-size: 11px;
-            color: #7d8590;
-            padding: 4px 0;
-        }
-
-        .feature-category li:before {
-            content: "✓";
-            color: #2ea043;
-            margin-right: 6px;
-            font-size: 10px;
-        }
-
+        .btn-social img { width: 20px; height: 20px; }
         .alert {
             padding: 10px;
             border-radius: 6px;
@@ -298,47 +142,30 @@
             font-size: 13px;
             display: none;
         }
-
-        .alert.error {
-            background: rgba(248,81,73,0.1);
-            border: 1px solid #f85149;
-            color: #f85149;
-        }
-
-        .alert.success {
-            background: rgba(46,160,67,0.1);
-            border: 1px solid #2ea043;
-            color: #2ea043;
-        }
-
-        @media (max-width: 560px) {
+        .alert.error { background: rgba(248,81,73,0.1); border: 1px solid #f85149; color: #f85149; }
+        .alert.success { background: rgba(46,160,67,0.1); border: 1px solid #2ea043; color: #2ea043; }
+        @media (max-width: 480px) {
             .login-card { padding: 24px; margin: 16px; }
             .social-login { grid-template-columns: 1fr; }
-            .feature-category ul { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="lang-selector">
-        <button class="lang-btn" id="langBtn">
-            🌐 <span id="currentLang">English</span> ▼
-        </button>
+        <button class="lang-btn" id="langBtn">🌐 <span id="currentLang">English</span> ▼</button>
         <div class="lang-dropdown" id="langDropdown">
             <div class="lang-option" data-lang="en">English</div>
             <div class="lang-option" data-lang="id">Bahasa Indonesia</div>
             <div class="lang-option" data-lang="zh">中文</div>
         </div>
     </div>
-
     <div class="login-card">
         <div class="logo" id="logoBtn">
             <img id="logoImage" src="https://via.placeholder.com/80x80?text=🤖" alt="AUTOLIVE">
             <h1>AUTOLIVE</h1>
         </div>
         <h2 id="title">SIGN IN TO AUTOLIVE</h2>
-        
         <div id="alert" class="alert"></div>
-        
         <form id="loginForm">
             <div class="form-group">
                 <label id="emailLabel">EMAIL ADDRESS</label>
@@ -348,304 +175,69 @@
                 <label id="passwordLabel">PASSWORD</label>
                 <input type="password" id="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="btn-primary" id="loginBtn">
-                SIGN IN
-            </button>
+            <button type="submit" class="btn-primary" id="loginBtn">SIGN IN</button>
         </form>
-        
         <div class="auth-links">
             <a href="#" id="createAccount">CREATE ACCOUNT</a>
             <a href="#" id="forgotPassword">FORGOT PASSWORD?</a>
         </div>
-        
-        <div class="divider">
-            <span id="orText">OR</span>
-        </div>
-        
+        <div class="divider"><span id="orText">OR</span></div>
         <div class="social-login" id="socialButtons">
-            <button class="btn-social" data-provider="google">
-                <img src="https://www.google.com/s2/favicons?domain=google.com" alt="Google"> GOOGLE
-            </button>
-            <button class="btn-social" data-provider="youtube">
-                <img src="https://www.google.com/s2/favicons?domain=youtube.com" alt="YouTube"> YOUTUBE
-            </button>
-            <button class="btn-social" data-provider="facebook">
-                <img src="https://www.google.com/s2/favicons?domain=facebook.com" alt="Facebook"> FACEBOOK
-            </button>
-            <button class="btn-social" data-provider="instagram">
-                <img src="https://www.google.com/s2/favicons?domain=instagram.com" alt="Instagram"> INSTAGRAM
-            </button>
-            <button class="btn-social" data-provider="tiktok">
-                <img src="https://www.google.com/s2/favicons?domain=tiktok.com" alt="TikTok"> TIKTOK
-            </button>
-        </div>
-        
-        <div class="features-section">
-            <h4>✨ AUTOLIVE FEATURES</h4>
-            
-            <div class="feature-category">
-                <h5>🔐 1. AUTHENTICATION & USER MANAGEMENT</h5>
-                <ul>
-                    <li>Register (email + password + OTP verifikasi)</li>
-                    <li>Login (JWT + refresh token)</li>
-                    <li>Login dengan Google</li>
-                    <li>Logout (single & all devices)</li>
-                    <li>Reset password via email</li>
-                    <li>Manajemen profil user</li>
-                    <li>Role system (User / Admin)</li>
-                    <li>Session & device tracking</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>📺 2. CHANNEL MANAGEMENT</h5>
-                <ul>
-                    <li>Tambah channel YouTube</li>
-                    <li>Tambah channel TikTok</li>
-                    <li>Multi-channel per user</li>
-                    <li>Status channel (active / expired / error)</li>
-                    <li>Sync data channel (subscriber, video count)</li>
-                    <li>Reconnect channel (refresh token)</li>
-                    <li>Hapus channel</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🔥 3. VIRAL CONTENT DISCOVERY</h5>
-                <ul>
-                    <li>Pencarian video viral (keyword / niche)</li>
-                    <li>Filter: Views minimum, Upload terbaru, Region</li>
-                    <li>Trending scraper (YouTube & TikTok)</li>
-                    <li>Sorting berdasarkan performa</li>
-                    <li>Preview video</li>
-                    <li>Bookmark video viral</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🧠 4. AI ENGINE (CORE FEATURE)</h5>
-                <ul>
-                    <li>Prediksi viralitas video (score 0–100)</li>
-                    <li>Generate judul viral</li>
-                    <li>Generate caption otomatis</li>
-                    <li>Generate hashtag trending</li>
-                    <li>Analisa konten (topik, emosi, hook)</li>
-                    <li>Rekomendasi niche & waktu upload terbaik</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>⬇️ 5. VIDEO DOWNLOADER</h5>
-                <ul>
-                    <li>Download video YouTube</li>
-                    <li>Download video TikTok (tanpa watermark)</li>
-                    <li>Pilihan kualitas (720p, 1080p)</li>
-                    <li>Batch download & Resume download</li>
-                    <li>Deteksi duplikasi file</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>✂️ 6. VIDEO EDITING (AUTO EDITOR)</h5>
-                <ul>
-                    <li>Auto clipping (ambil bagian menarik)</li>
-                    <li>Convert ke format vertical (9:16)</li>
-                    <li>Auto subtitle (speech-to-text)</li>
-                    <li>Tambah watermark/logo & background music</li>
-                    <li>Trim & cut video</li>
-                    <li>Template editing otomatis</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>📤 7. AUTO UPLOAD SYSTEM</h5>
-                <ul>
-                    <li>Upload ke YouTube & TikTok</li>
-                    <li>Upload ke multi-channel</li>
-                    <li>Penjadwalan upload</li>
-                    <li>Retry otomatis jika gagal</li>
-                    <li>Status upload tracking</li>
-                    <li>Simpan URL hasil upload</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>⚙️ 8. WORKFLOW BUILDER (AUTOMATION CORE)</h5>
-                <ul>
-                    <li>Create workflow: Viral → Download → Edit → Upload</li>
-                    <li>Drag & drop workflow builder</li>
-                    <li>Save & reuse workflow</li>
-                    <li>Workflow templates</li>
-                    <li>Multi-step automation</li>
-                    <li>Trigger otomatis (jadwal / event)</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🤖 9. AUTOMATION ENGINE</h5>
-                <ul>
-                    <li>Scheduler (cron job)</li>
-                    <li>Queue system (antrian proses)</li>
-                    <li>Auto execution workflow</li>
-                    <li>Parallel processing</li>
-                    <li>Retry & fail handling</li>
-                    <li>Logging eksekusi</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>📊 10. ANALYTICS & MONITORING</h5>
-                <ul>
-                    <li>Statistik video (Views, Like, Comment)</li>
-                    <li>Growth channel</li>
-                    <li>Performa workflow</li>
-                    <li>Engagement rate</li>
-                    <li>Grafik performa</li>
-                    <li>Tracking historis</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>📄 11. REPORTING SYSTEM</h5>
-                <ul>
-                    <li>Laporan harian / mingguan</li>
-                    <li>Export PDF / Excel</li>
-                    <li>Email report otomatis</li>
-                    <li>Summary performa konten</li>
-                    <li>Insight AI</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🔔 12. NOTIFICATION SYSTEM</h5>
-                <ul>
-                    <li>Notifikasi email: Upload selesai, Error sistem</li>
-                    <li>(Optional) WhatsApp notification</li>
-                    <li>Real-time alert</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🧾 13. ADMIN PANEL</h5>
-                <ul>
-                    <li>Manajemen user</li>
-                    <li>Suspend / aktifkan user</li>
-                    <li>Monitoring sistem</li>
-                    <li>Lihat logs</li>
-                    <li>Kontrol penggunaan API</li>
-                    <li>Statistik global platform</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🧹 14. STORAGE MANAGEMENT</h5>
-                <ul>
-                    <li>Manajemen file: Downloaded, Processed, Uploaded</li>
-                    <li>Auto delete file lama</li>
-                    <li>Limit storage usage</li>
-                    <li>Cleanup file temp otomatis</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>💾 15. DATABASE & HISTORY</h5>
-                <ul>
-                    <li>Data user, channel, video, workflow</li>
-                    <li>Riwayat eksekusi & upload</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🎨 16. FRONTEND FEATURES</h5>
-                <ul>
-                    <li>Dashboard (ringkasan performa)</li>
-                    <li>Viral discovery page</li>
-                    <li>Channel manager UI</li>
-                    <li>Video editor UI</li>
-                    <li>Workflow builder UI (drag-drop)</li>
-                    <li>Scheduler calendar</li>
-                    <li>Analytics charts</li>
-                    <li>Settings page</li>
-                    <li>Admin dashboard</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🔗 17. API & INTEGRATION</h5>
-                <ul>
-                    <li>Integrasi API YouTube</li>
-                    <li>Integrasi TikTok (API / scraping)</li>
-                    <li>Email API (SMTP)</li>
-                    <li>Webhook support</li>
-                    <li>API untuk frontend</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🔐 18. SECURITY & PERFORMANCE</h5>
-                <ul>
-                    <li>Rate limiting</li>
-                    <li>Input validation</li>
-                    <li>Error handling</li>
-                    <li>Logging system</li>
-                    <li>Token authentication</li>
-                    <li>Protection brute force</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🚀 19. ADVANCED (SCALING FEATURE)</h5>
-                <ul>
-                    <li>Multi-tenant system (SaaS)</li>
-                    <li>Subscription / billing system</li>
-                    <li>API public (developer access)</li>
-                    <li>Workflow marketplace</li>
-                    <li>Mobile app support</li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>🧠 CORE VALUE: AUTO CONTENT MACHINE</h5>
-                <ul>
-                    <li><strong>Cari Viral → Analisa AI → Download → Edit → Upload → Scale</strong></li>
-                </ul>
-            </div>
-            
-            <div class="feature-category">
-                <h5>📊 PRIORITAS DEVELOPMENT</h5>
-                <ul>
-                    <li><strong>🔥 WAJIB (MVP):</strong> Auth, Channel, Viral discovery, Downloader, Upload, Workflow sederhana</li>
-                    <li><strong>⚡ MENENGAH:</strong> AI basic, Editor, Scheduler, Analytics</li>
-                    <li><strong>🚀 ADVANCED:</strong> AI full, Automation complex, SaaS system, Mobile app</li>
-                </ul>
-            </div>
+            <button class="btn-social" data-provider="google"><img src="https://www.google.com/s2/favicons?domain=google.com"> GOOGLE</button>
+            <button class="btn-social" data-provider="youtube"><img src="https://www.google.com/s2/favicons?domain=youtube.com"> YOUTUBE</button>
+            <button class="btn-social" data-provider="facebook"><img src="https://www.google.com/s2/favicons?domain=facebook.com"> FACEBOOK</button>
+            <button class="btn-social" data-provider="instagram"><img src="https://www.google.com/s2/favicons?domain=instagram.com"> INSTAGRAM</button>
+            <button class="btn-social" data-provider="tiktok"><img src="https://www.google.com/s2/favicons?domain=tiktok.com"> TIKTOK</button>
         </div>
     </div>
 
     <script>
-        // Logo management
-        let currentLogo = localStorage.getItem('siteLogo') || '';
-        
-        function loadLogo() {
-            const logoImg = document.getElementById('logoImage');
-            if (currentLogo && currentLogo !== '') {
-                logoImg.src = currentLogo;
+        // Dynamic API URL for GitHub Codespaces
+        function getApiUrl() {
+            const hostname = window.location.hostname;
+            console.log('Current hostname:', hostname);
+            
+            // For GitHub Codespaces
+            if (hostname.includes('app.github.dev')) {
+                // Extract codespace name (remove -3000 suffix)
+                let codespaceName = hostname;
+                if (codespaceName.includes('-3000')) {
+                    codespaceName = codespaceName.replace('-3000.app.github.dev', '');
+                } else {
+                    codespaceName = codespaceName.replace('.app.github.dev', '');
+                }
+                const apiUrl = `https://${codespaceName}-5001.app.github.dev`;
+                console.log('Codespaces API URL:', apiUrl);
+                return apiUrl;
             }
+            
+            // For localhost
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:5001';
+            }
+            
+            return `http://${hostname}:5001`;
         }
         
-        document.getElementById('logoBtn').addEventListener('click', () => {
-            if (confirm('Change logo? (Enter image URL)')) {
-                const url = prompt('Enter image URL:', currentLogo);
-                if (url) {
-                    currentLogo = url;
-                    localStorage.setItem('siteLogo', url);
-                    loadLogo();
-                    showAlert('Logo updated!', 'success');
-                }
-            }
-        });
+        const API_URL = getApiUrl();
+        console.log('✅ API_URL configured:', API_URL);
         
-        // Translations
+        // Check backend connection
+        async function checkBackend() {
+            try {
+                console.log('Checking backend at:', API_URL);
+                const response = await fetch(`${API_URL}/api/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Backend connected:', data);
+                    return true;
+                }
+            } catch (error) {
+                console.error('❌ Backend not reachable:', error);
+            }
+            return false;
+        }
+        
         const translations = {
             en: {
                 title: 'SIGN IN TO AUTOLIVE',
@@ -657,13 +249,7 @@
                 forgotPassword: 'FORGOT PASSWORD?',
                 loginSuccess: 'Login successful! Redirecting...',
                 loginError: 'Invalid email or password',
-                socialLogin: {
-                    google: 'GOOGLE',
-                    youtube: 'YOUTUBE',
-                    facebook: 'FACEBOOK',
-                    instagram: 'INSTAGRAM',
-                    tiktok: 'TIKTOK'
-                }
+                socialLogin: { google: 'GOOGLE', youtube: 'YOUTUBE', facebook: 'FACEBOOK', instagram: 'INSTAGRAM', tiktok: 'TIKTOK' }
             },
             id: {
                 title: 'MASUK KE AUTOLIVE',
@@ -675,13 +261,7 @@
                 forgotPassword: 'LUPA KATA SANDI?',
                 loginSuccess: 'Berhasil masuk! Mengalihkan...',
                 loginError: 'Email atau kata sandi salah',
-                socialLogin: {
-                    google: 'GOOGLE',
-                    youtube: 'YOUTUBE',
-                    facebook: 'FACEBOOK',
-                    instagram: 'INSTAGRAM',
-                    tiktok: 'TIKTOK'
-                }
+                socialLogin: { google: 'GOOGLE', youtube: 'YOUTUBE', facebook: 'FACEBOOK', instagram: 'INSTAGRAM', tiktok: 'TIKTOK' }
             },
             zh: {
                 title: '登录 AUTOLIVE',
@@ -693,13 +273,7 @@
                 forgotPassword: '忘记密码？',
                 loginSuccess: '登录成功！正在跳转...',
                 loginError: '电子邮件或密码错误',
-                socialLogin: {
-                    google: '谷歌',
-                    youtube: 'YouTube',
-                    facebook: '脸书',
-                    instagram: 'Instagram',
-                    tiktok: '抖音'
-                }
+                socialLogin: { google: '谷歌', youtube: 'YouTube', facebook: '脸书', instagram: 'Instagram', tiktok: '抖音' }
             }
         };
 
@@ -715,7 +289,6 @@
             document.getElementById('createAccount').textContent = t.createAccount;
             document.getElementById('forgotPassword').textContent = t.forgotPassword;
             
-            // Update social buttons text
             document.querySelectorAll('.btn-social').forEach(btn => {
                 const provider = btn.dataset.provider;
                 if (t.socialLogin[provider]) {
@@ -733,11 +306,7 @@
         // Language selector
         const langBtn = document.getElementById('langBtn');
         const langDropdown = document.getElementById('langDropdown');
-        
-        langBtn.addEventListener('click', () => {
-            langDropdown.classList.toggle('show');
-        });
-        
+        langBtn.addEventListener('click', () => langDropdown.classList.toggle('show'));
         document.querySelectorAll('.lang-option').forEach(opt => {
             opt.addEventListener('click', () => {
                 currentLang = opt.dataset.lang;
@@ -746,7 +315,6 @@
                 langDropdown.classList.remove('show');
             });
         });
-        
         document.addEventListener('click', (e) => {
             if (!langBtn.contains(e.target) && !langDropdown.contains(e.target)) {
                 langDropdown.classList.remove('show');
@@ -758,20 +326,20 @@
             alertDiv.textContent = message;
             alertDiv.className = `alert ${type}`;
             alertDiv.style.display = 'block';
-            setTimeout(() => {
-                alertDiv.style.display = 'none';
-            }, 4000);
+            setTimeout(() => alertDiv.style.display = 'none', 4000);
         }
 
         async function login(email, password) {
             try {
-                const response = await fetch('http://localhost:5001/api/auth/login', {
+                console.log('Login attempt to:', `${API_URL}/api/auth/login`);
+                const response = await fetch(`${API_URL}/api/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password })
                 });
                 
                 const data = await response.json();
+                console.log('Login response:', data);
                 
                 if (response.ok) {
                     localStorage.setItem('token', data.token);
@@ -789,7 +357,8 @@
                     showAlert(data.message || translations[currentLang].loginError, 'error');
                 }
             } catch (error) {
-                showAlert('Cannot connect to server. Make sure backend is running on port 5001', 'error');
+                console.error('Login error:', error);
+                showAlert(`Cannot connect to server at ${API_URL}. Make sure backend is running on port 5001`, 'error');
             }
         }
 
@@ -798,7 +367,6 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const btn = document.getElementById('loginBtn');
-            
             btn.disabled = true;
             btn.innerHTML = 'LOADING...';
             await login(email, password);
@@ -806,7 +374,6 @@
             btn.innerHTML = translations[currentLang].loginBtn;
         });
 
-        // Social login handlers
         function handleSocialLogin(provider) {
             showAlert(`Connecting to ${provider}...`, 'success');
             setTimeout(() => {
@@ -821,17 +388,13 @@
         }
 
         document.querySelectorAll('.btn-social').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const provider = btn.dataset.provider;
-                handleSocialLogin(provider);
-            });
+            btn.addEventListener('click', () => handleSocialLogin(btn.dataset.provider));
         });
         
         document.getElementById('createAccount').onclick = () => showAlert('Create account feature coming soon', 'success');
         document.getElementById('forgotPassword').onclick = () => showAlert('Password reset feature coming soon', 'success');
 
         updateLanguage();
-        loadLogo();
 
         // Check if already logged in
         const token = localStorage.getItem('token');
@@ -844,6 +407,9 @@
                 window.location.href = '/user/dashboard.html';
             }
         }
+        
+        // Check backend on load
+        checkBackend();
     </script>
 </body>
 </html>

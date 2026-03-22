@@ -5,7 +5,10 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    credentials: true
+}));
 app.use(express.json());
 
 // Mock users data
@@ -52,14 +55,16 @@ app.get('/api/health', (req, res) => {
 app.post('/api/auth/login', (req, res) => {
     const { email, password } = req.body;
     
+    console.log('Login attempt:', email);
+    
     const user = users[email];
     
     if (user && user.password === password) {
-        // Generate mock token
         const token = Buffer.from(JSON.stringify({ 
             id: user.id, 
             email: user.email, 
             role: user.role,
+            name: user.name,
             exp: Date.now() + 7 * 24 * 60 * 60 * 1000 
         })).toString('base64');
         
@@ -84,7 +89,8 @@ app.post('/api/auth/login', (req, res) => {
 app.post('/api/auth/verify-api-key', (req, res) => {
     const { email, provider, apiKey } = req.body;
     
-    // Mock API key validation
+    console.log('API Key verification:', { email, provider });
+    
     if (apiKey && apiKey.length >= 10) {
         const user = {
             id: 'social_' + Date.now(),
@@ -99,6 +105,7 @@ app.post('/api/auth/verify-api-key', (req, res) => {
             id: user.id, 
             email: user.email, 
             role: user.role,
+            name: user.name,
             exp: Date.now() + 7 * 24 * 60 * 60 * 1000 
         })).toString('base64');
         
@@ -115,6 +122,8 @@ app.post('/api/auth/verify-api-key', (req, res) => {
 // Users endpoint (admin only)
 app.get('/api/users', (req, res) => {
     const authHeader = req.headers.authorization;
+    console.log('Users endpoint called');
+    
     if (!authHeader) {
         return res.status(401).json({ message: 'Unauthorized' });
     }
@@ -137,42 +146,12 @@ app.get('/api/users', (req, res) => {
             res.status(403).json({ message: 'Forbidden' });
         }
     } catch (error) {
+        console.error('Token decode error:', error);
         res.status(401).json({ message: 'Invalid token' });
     }
 });
 
-// Profile endpoint
-app.get('/api/auth/profile', (req, res) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
-    
-    try {
-        const token = authHeader.replace('Bearer ', '');
-        const decoded = JSON.parse(Buffer.from(token, 'base64').toString());
-        const user = Object.values(users).find(u => u.id === decoded.id);
-        
-        if (user) {
-            res.json({
-                user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    plan: user.plan,
-                    avatar: user.avatar
-                }
-            });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        res.status(401).json({ message: 'Invalid token' });
-    }
-});
-
-// Dashboard stats endpoint
+// Admin stats endpoint
 app.get('/api/admin/stats', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -204,7 +183,7 @@ app.get('/api/admin/stats', (req, res) => {
     }
 });
 
-// User dashboard stats
+// User stats endpoint
 app.get('/api/user/stats', (req, res) => {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -228,13 +207,13 @@ app.get('/api/user/stats', (req, res) => {
                     engagement: '+23%'
                 },
                 recentVideos: [
-                    { id: 1, title: 'Viral Video 1', views: '1.2M', status: 'completed' },
-                    { id: 2, title: 'Viral Video 2', views: '856K', status: 'processing' },
-                    { id: 3, title: 'Viral Video 3', views: '432K', status: 'scheduled' }
+                    { id: 1, title: 'Viral Video 1 - Amazing Content', views: '1.2M', status: 'completed' },
+                    { id: 2, title: 'Viral Video 2 - Trending Now', views: '856K', status: 'processing' },
+                    { id: 3, title: 'Viral Video 3 - Must Watch', views: '432K', status: 'scheduled' }
                 ],
                 channels: [
-                    { id: 1, name: 'YouTube Channel', subscribers: '10.2K', status: 'active' },
-                    { id: 2, name: 'TikTok Account', followers: '25.5K', status: 'active' }
+                    { id: 1, name: 'My YouTube Channel', subscribers: '10.2K', status: 'active' },
+                    { id: 2, name: '@my_tiktok', followers: '25.5K', status: 'active' }
                 ]
             });
         } else {
@@ -245,8 +224,9 @@ app.get('/api/user/stats', (req, res) => {
     }
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`✅ Backend server running on http://localhost:${PORT}`);
+// Start server on all interfaces
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Backend server running on port ${PORT}`);
+    console.log(`   Local: http://localhost:${PORT}`);
     console.log(`   Health check: http://localhost:${PORT}/api/health`);
 });
