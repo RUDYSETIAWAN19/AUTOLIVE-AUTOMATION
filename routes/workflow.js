@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const { startAutomation, stopAutomation, isRunning } = require('../agents/scheduler');
+const fs = require('fs-extra');
+const path = require('path');
+router.get('/settings', (req,res)=>{ if(!req.session.user) return res.redirect('/login'); let settings={keyword:'viral',mode:'once'}; const p=path.join(__dirname,'../config/workflow_settings.json'); if(fs.existsSync(p)) settings=fs.readJsonSync(p); res.render('workflow-settings',{user:req.session.user,settings}); });
+router.post('/settings', async(req,res)=>{ await fs.writeJson(path.join(__dirname,'../config/workflow_settings.json'), req.body); res.redirect('/workflow/settings'); });
+router.post('/start', (req,res)=>{ startAutomation(req.db); res.json({status:'started'}); });
+router.post('/stop', (req,res)=>{ stopAutomation(); res.json({status:'stopped'}); });
+router.get('/status', (req,res)=>{ res.json({running:isRunning()}); });
+module.exports = router;

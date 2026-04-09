@@ -1,0 +1,8 @@
+<%- include('partials/header', { title: title, pageTitle: pageTitle }) %>
+<form method="POST" action="/workflow/settings">
+    <div class="mb-3"><label>Keyword (tema)</label><input name="keyword" value="<%= settings.keyword %>" class="form-control"></div>
+    <div class="mb-3"><label>Sumber Video</label><select name="source" class="form-control"><option>youtube</option><option>tiktok</option></select></div>
+    <div class="mb-3"><label>Mode Automation</label><select name="mode" class="form-control"><option <%= settings.mode === 'once' ? 'selected' : '' %>>once</option><option <%= settings.mode === 'hourly' ? 'selected' : '' %>>hourly</option><option <%= settings.mode === 'daily' ? 'selected' : '' %>>daily</option></select></div>
+    <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+</form>
+<%- include('partials/footer') %>

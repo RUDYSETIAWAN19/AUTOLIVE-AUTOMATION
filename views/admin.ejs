@@ -1,0 +1,86 @@
+<%- include('partials/header', { title: 'Admin Panel', pageTitle: 'Admin Panel' }) %>
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">Daftar User</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                        <thead>
+                            <tr><th>Nama</th><th>Email</th><th>Role</th><th>Masa Aktif</th><th>YouTube</th><th>Aksi</th></tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <tr><td colspan="6" class="text-center">Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">Riwayat Transaksi</div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                        <thead>
+                            <tr><th>User</th><th>Paket</th><th>Jumlah</th><th>Tanggal</th><th>Status</th></tr>
+                        </thead>
+                        <tbody id="transactionTableBody">
+                            <tr><td colspan="5" class="text-center">Memuat...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    async function loadUsers() {
+        const res = await fetch('/admin/users');
+        const users = await res.json();
+        const tbody = document.getElementById('userTableBody');
+        if(users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">Tidak ada user</td></tr>';
+            return;
+        }
+        tbody.innerHTML = users.map(u => `
+            <tr>
+                <td>${u.name}</td>
+                <td>${u.email}</td>
+                <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
+                <td>${new Date(u.trial_expired).toLocaleDateString()}</td>
+                <td>${u.youtube_connected ? '<i class="fas fa-check-circle text-success"></i>' : '<i class="fas fa-times-circle text-danger"></i>'}</td>
+                <td><button class="btn btn-sm btn-warning extendBtn" data-email="${u.email}">Perpanjang 30 hari</button></td>
+            </tr>
+        `).join('');
+        document.querySelectorAll('.extendBtn').forEach(btn => {
+            btn.onclick = async () => {
+                await fetch('/admin/extend', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email: btn.dataset.email }) });
+                alert('Masa aktif diperpanjang 30 hari');
+                loadUsers();
+            };
+        });
+    }
+    async function loadTransactions() {
+        const res = await fetch('/admin/transactions');
+        const transactions = await res.json();
+        const tbody = document.getElementById('transactionTableBody');
+        if(transactions.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">Belum ada transaksi</td></tr>';
+            return;
+        }
+        tbody.innerHTML = transactions.map(t => `
+            <tr>
+                <td>${t.user_email || t.user_id}</td>
+                <td>${t.package}</td>
+                <td>Rp ${t.amount.toLocaleString()}</td>
+                <td>${new Date(t.date).toLocaleString()}</td>
+                <td><span class="badge bg-success">${t.status}</span></td>
+            </tr>
+        `).join('');
+    }
+    loadUsers();
+    loadTransactions();
+</script>
+<%- include('partials/footer') %>

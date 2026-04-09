@@ -1,0 +1,9 @@
+<%- include('partials/header', { title: title, pageTitle: pageTitle }) %>
+<p>Pengaturan jadwal otomatisasi dapat diubah di <a href="/workflow/settings">Workflow Settings</a>.</p>
+<p>Mode saat ini: <strong id="currentMode">Memuat...</strong></p>
+<script>
+    fetch('/workflow/status').then(r=>r.json()).then(data=>{
+        document.getElementById('currentMode').innerText = data.running ? 'Aktif (berjalan)' : 'Berhenti';
+    });
+</script>
+<%- include('partials/footer') %>

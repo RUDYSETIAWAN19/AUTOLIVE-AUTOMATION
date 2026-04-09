@@ -1,0 +1,18 @@
+<%- include('partials/header', { title: title, pageTitle: pageTitle }) %>
+<table class="table table-striped">
+    <thead>
+        <tr><th>Judul</th><th>URL YouTube</th><th>Status</th><th>Tema</th><th>Tanggal Upload</th></tr>
+    </thead>
+    <tbody>
+        <% videos.forEach(v => { %>
+            <tr>
+                <td><%= v.title %></td>
+                <td><a href="<%= v.youtube_url %>" target="_blank">Link</a></td>
+                <td><span class="badge <%= v.status === 'completed' ? 'bg-success' : 'bg-danger' %>"><%= v.status %></span></td>
+                <td><%= v.theme %></td>
+                <td><%= new Date(v.uploaded_at).toLocaleString() %></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+<%- include('partials/footer') %>

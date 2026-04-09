@@ -1,0 +1,44 @@
+<%- include('partials/header', { title: 'Profile', pageTitle: 'Profile' }) %>
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Informasi Akun</h5>
+                <hr>
+                <p><strong>Nama:</strong> <%= user.name %></p>
+                <p><strong>Email:</strong> <%= user.email %></p>
+                <p><strong>Role:</strong> <%= user.role === 'admin' ? 'Administrator' : 'Pengguna' %></p>
+                <p><strong>Masa Aktif Berlangganan:</strong> <%= new Date(user.trial_expired).toLocaleDateString() %> (sisa <%= remainingDays %> hari, <%= remainingHours %> jam)</p>
+                <p><strong>Channel YouTube:</strong> <%= user.channel_id || 'Belum terhubung' %></p>
+                <hr>
+                <h6>Ubah Password</h6>
+                <form id="changePasswordForm">
+                    <div class="mb-3"><input type="password" id="oldPass" class="form-control" placeholder="Password lama" required></div>
+                    <div class="mb-3"><input type="password" id="newPass" class="form-control" placeholder="Password baru" required></div>
+                    <button type="submit" class="btn btn-primary">Ganti Password</button>
+                </form>
+                <div id="passMsg" class="mt-2"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.getElementById('changePasswordForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const oldPass = document.getElementById('oldPass').value;
+        const newPass = document.getElementById('newPass').value;
+        const res = await fetch('/profile/change-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldPassword: oldPass, newPassword: newPass })
+        });
+        const data = await res.json();
+        if(data.success) {
+            document.getElementById('passMsg').innerHTML = '<div class="alert alert-success">Password berhasil diubah</div>';
+            document.getElementById('changePasswordForm').reset();
+        } else {
+            document.getElementById('passMsg').innerHTML = '<div class="alert alert-danger">' + data.error + '</div>';
+        }
+    };
+</script>
+<%- include('partials/footer') %>

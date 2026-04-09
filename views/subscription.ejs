@@ -1,0 +1,96 @@
+<%- include('partials/header', { title: 'Subscription', pageTitle: 'Subscription' }) %>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4">
+                    <% if (isRegister) { %>
+                        Konfirmasi Pembayaran
+                    <% } else { %>
+                        Perpanjang / Upgrade Paket
+                    <% } %>
+                </h4>
+                <p class="text-center">Pilih metode pembayaran untuk paket <strong><%= selectedPackage ? selectedPackage.toUpperCase() : '' %></strong> sebesar <strong>Rp <%= price.toLocaleString() %></strong></p>
+                
+                <!-- Stripe Elements -->
+                <form id="payment-form">
+                    <div id="card-element" class="form-control mb-3" style="padding: 12px;"></div>
+                    <button id="submitBtn" class="btn btn-login w-100" disabled>Bayar dengan Kartu</button>
+                    <div id="payment-message" class="mt-3"></div>
+                </form>
+                <div class="text-center mt-2">
+                    <small>Pembayaran diproses oleh Stripe. Data kartu aman.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    const stripe = Stripe('<%= stripePublishableKey %>');
+    const elements = stripe.elements();
+    const cardElement = elements.create('card', { style: { base: { fontSize: '16px', color: '#32325d' } } });
+    cardElement.mount('#card-element');
+
+    const form = document.getElementById('payment-form');
+    const submitBtn = document.getElementById('submitBtn');
+    const messageDiv = document.getElementById('payment-message');
+
+    // Aktifkan tombol setelah card element siap
+    cardElement.on('ready', () => { submitBtn.disabled = false; });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Memproses...';
+        messageDiv.innerHTML = '';
+
+        // 1. Buat PaymentIntent di server
+        const pkg = '<%= selectedPackage %>';
+        const resIntent = await fetch('/payment/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ package: pkg })
+        });
+        const intentData = await resIntent.json();
+        if (intentData.error) {
+            messageDiv.innerHTML = '<div class="alert alert-danger">' + intentData.error + '</div>';
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Bayar dengan Kartu';
+            return;
+        }
+
+        // 2. Konfirmasi pembayaran dengan kartu
+        const { error, paymentIntent } = await stripe.confirmCardPayment(intentData.clientSecret, {
+            payment_method: { card: cardElement }
+        });
+
+        if (error) {
+            messageDiv.innerHTML = '<div class="alert alert-danger">' + error.message + '</div>';
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Bayar dengan Kartu';
+        } else if (paymentIntent.status === 'succeeded') {
+            // 3. Kirim konfirmasi ke server untuk menyelesaikan transaksi
+            const confirmRes = await fetch('/payment/confirm-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ paymentIntentId: paymentIntent.id, package: pkg, method: 'stripe' })
+            });
+            const confirmData = await confirmRes.json();
+            if (confirmData.success) {
+                messageDiv.innerHTML = '<div class="alert alert-success">' + confirmData.message + '</div>';
+                if (confirmData.redirect) {
+                    setTimeout(() => window.location.href = confirmData.redirect, 1500);
+                } else {
+                    setTimeout(() => window.location.href = '/dashboard', 1500);
+                }
+            } else {
+                messageDiv.innerHTML = '<div class="alert alert-danger">' + (confirmData.error || 'Gagal memverifikasi pembayaran') + '</div>';
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Bayar dengan Kartu';
+            }
+        }
+    });
+</script>
+<%- include('partials/footer') %>

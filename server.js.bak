@@ -1,0 +1,263 @@
+require('dotenv').config();
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
+const rateLimit = require('express-rate-limit');
+const { Low } = require('lowdb');
+const { JSONFile } = require('lowdb/node');
+const fs = require('fs-extra');
+const bcrypt = require('bcryptjs');
+
+const app = express();
+const file = path.join(__dirname, 'config', 'db.json');
+const adapter = new JSONFile(file);
+const db = new Low(adapter, { users: [], transactions: [], videos: [], settings: {} });
+
+app.use(express.json(), express.urlencoded({ extended: true }), express.static('public'));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 7*24*60*60*1000 }
+}));
+app.use('/api/', rateLimit({ windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS), max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS) }));
+
+// Translations
+const translations = {
+  id: {
+    title: "AUTOLIVE AUTOMATION",
+    slogan: "AI Agent untuk Otomatisasi YouTube Shorts",
+    email: "Email",
+    password: "Kata Sandi",
+    loginBtn: "MASUK",
+    noAccount: "Belum punya akun?",
+    register: "Daftar sekarang",
+    registerTitle: "Daftar Akun Baru",
+    fullname: "Nama Lengkap",
+    fullnamePlaceholder: "Nama Anda",
+    confirmPassword: "Konfirmasi Password",
+    confirmPasswordPlaceholder: "ulangi password",
+    choosePackage: "Pilih Paket",
+    freeDuration: "7 hari",
+    proDuration: "14 hari",
+    premiumDuration: "30 hari",
+    registerBtn: "DAFTAR",
+    haveAccount: "Sudah punya akun?",
+    loginLink: "Login",
+    fillAllFields: "Lengkapi semua field",
+    passwordMismatch: "Password tidak cocok",
+    emailExists: "Email sudah terdaftar. Silakan upgrade atau perpanjang masa aktif Anda untuk mengakses fitur kami!",
+    registerTitle: "Daftar Akun Baru",
+    fullname: "Nama Lengkap",
+    fullnamePlaceholder: "Nama Anda",
+    confirmPassword: "Konfirmasi Password",
+    confirmPasswordPlaceholder: "ulangi password",
+    choosePackage: "Pilih Paket",
+    freeDuration: "7 hari",
+    proDuration: "14 hari",
+    premiumDuration: "30 hari",
+    registerBtn: "DAFTAR",
+    haveAccount: "Sudah punya akun?",
+    loginLink: "Login",
+    fillAllFields: "Lengkapi semua field",
+    passwordMismatch: "Password tidak cocok",
+    emailExists: "Email sudah terdaftar. Silakan upgrade atau perpanjang masa aktif Anda untuk mengakses fitur kami!",
+    version: "Versi 2.0.0 | Rilis: April 2026",
+    credit: "Dibuat oleh AUTOLIVE.RS — Sistem AI Otomatis",
+    desc: "AUTOLIVE AUTOMATION adalah sistem cerdas yang secara otomatis mencari, mengedit, dan mengunggah YouTube Shorts. Menggunakan AI Agent & algoritma prediksi viral.",
+    rules: [
+      "✅ Hanya konten bebas copyright (Lisensi Creative Commons)",
+      "✅ Zero storage policy: video otomatis dihapus setelah upload",
+      "✅ Trial 7 hari untuk semua pengguna baru",
+      "⚠️ Dilarang menyalahgunakan sistem untuk konten ilegal"
+    ],
+    footer: "© 2026 AUTOLIVE RS — Hak cipta dilindungi",
+    loginFailed: "Email atau password salah",
+    themeToggle: "Ganti Tema"
+  },
+  en: {
+    title: "AUTOLIVE AUTOMATION",
+    slogan: "AI Agent for YouTube Shorts Automation",
+    email: "Email",
+    password: "Password",
+    loginBtn: "LOGIN",
+    noAccount: "Don't have an account?",
+    register: "Register now",
+    registerTitle: "Create New Account",
+    fullname: "Full Name",
+    fullnamePlaceholder: "Your Name",
+    confirmPassword: "Confirm Password",
+    confirmPasswordPlaceholder: "retype password",
+    choosePackage: "Choose Package",
+    freeDuration: "7 days",
+    proDuration: "14 days",
+    premiumDuration: "30 days",
+    registerBtn: "REGISTER",
+    haveAccount: "Already have an account?",
+    loginLink: "Login",
+    fillAllFields: "Please fill all fields",
+    passwordMismatch: "Passwords do not match",
+    emailExists: "Email already registered. Please upgrade or extend your active period to access our features!",
+    registerTitle: "Create New Account",
+    fullname: "Full Name",
+    fullnamePlaceholder: "Your Name",
+    confirmPassword: "Confirm Password",
+    confirmPasswordPlaceholder: "retype password",
+    choosePackage: "Choose Package",
+    freeDuration: "7 days",
+    proDuration: "14 days",
+    premiumDuration: "30 days",
+    registerBtn: "REGISTER",
+    haveAccount: "Already have an account?",
+    loginLink: "Login",
+    fillAllFields: "Please fill all fields",
+    passwordMismatch: "Passwords do not match",
+    emailExists: "Email already registered. Please upgrade or extend your active period to access our features!",
+    version: "Version 2.0.0 | Released: April 2026",
+    credit: "Created by AUTOLIVE.RS — AI Automation System",
+    desc: "AUTOLIVE AUTOMATION is an intelligent system that automatically searches, edits, and uploads YouTube Shorts. Uses AI Agent & viral prediction algorithm.",
+    rules: [
+      "✅ Copyright-free content only (Creative Commons License)",
+      "✅ Zero storage policy: videos are automatically deleted after upload",
+      "✅ 7-day trial for all new users",
+      "⚠️ Do not misuse the system for illegal content"
+    ],
+    footer: "© 2026 AUTOLIVE RS — All rights reserved",
+    loginFailed: "Invalid email or password",
+    themeToggle: "Toggle Theme"
+  }
+};
+
+// Helper untuk menghitung sisa waktu
+function getRemainingTime(expiryISO) {
+    const now = new Date();
+    const expiry = new Date(expiryISO);
+    const diffMs = expiry - now;
+    if (diffMs <= 0) return { days: 0, hours: 0 };
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    return { days, hours };
+}
+
+// Middleware bahasa dan tema
+app.use((req, res, next) => {
+  let lang = 'id';
+  const acceptLang = req.headers['accept-language'];
+  if (acceptLang && acceptLang.split(',')[0].substring(0,2) === 'en') lang = 'en';
+  if (req.session && req.session.lang) lang = req.session.lang;
+  req.lang = lang;
+  res.locals.t = (key) => translations[lang][key] || key;
+  res.locals.currentLang = lang;
+  
+  let theme = req.cookies?.theme || 'light';
+  if (req.session && req.session.theme) theme = req.session.theme;
+  res.locals.theme = theme;
+  next();
+});
+
+app.get('/set-lang/:lang', (req, res) => {
+  const lang = req.params.lang === 'en' ? 'en' : 'id';
+  req.session.lang = lang;
+  res.redirect('back');
+});
+
+app.post('/set-theme', express.json(), (req, res) => {
+  const { theme } = req.body;
+  if (theme === 'dark' || theme === 'light') {
+    req.session.theme = theme;
+    res.cookie('theme', theme, { maxAge: 365*24*60*60*1000 });
+    res.json({ success: true });
+  } else res.status(400).json({ success: false });
+});
+
+async function initDB() {
+  await db.read();
+  db.data ||= { users: [], transactions: [], videos: [], settings: {} };
+  if (db.data.users.length === 0) {
+    const hashed = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+    db.data.users.push({ id: '1', email: process.env.ADMIN_EMAILS.split(',')[0], password: hashed, name: 'Admin', role: 'admin', trial_expired: new Date(Date.now()+365*24*60*60*1000).toISOString(), created_at: new Date().toISOString(), channel_id: null, youtube_connected: false });
+  }
+  await db.write();
+}
+initDB();
+app.use((req,res,next)=>{ req.db = db; next(); });
+
+// Middleware untuk inject user data ke semua view yang membutuhkan (setelah login)
+app.use(async (req, res, next) => {
+  if (req.session.user) {
+    const user = req.session.user;
+    const { days, hours } = getRemainingTime(user.trial_expired);
+    res.locals.user = user;
+    res.locals.remainingDays = days;
+    res.locals.remainingHours = hours;
+  }
+  next();
+});
+
+// Routes
+const authRoutes = require('./routes/auth');
+const workflowRoutes = require('./routes/workflow');
+const paymentRoutes = require('./routes/payment');
+const youtubeRoutes = require('./routes/youtube');
+app.use('/', authRoutes);
+app.use('/workflow', workflowRoutes);
+app.use('/payment', paymentRoutes);
+app.use('/youtube', youtubeRoutes);
+
+app.get('/', (req, res) => { res.redirect('/login'); });
+
+// Protected pages dengan layout baru
+app.get('/dashboard', async (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  const user = req.session.user;
+  const videos = db.data.videos.filter(v => v.user_id === user.id);
+  const stats = { total: videos.length, success: videos.filter(v=>v.status==='completed').length, failed: videos.filter(v=>v.status==='failed').length };
+  res.render('dashboard', { title: 'Dashboard', pageTitle: 'Dashboard', user, stats, videos: videos.slice(-5) });
+});
+
+app.get('/video-manager', async (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  const videos = db.data.videos.filter(v => v.user_id === req.session.user.id);
+  res.render('video-manager', { title: 'Video Manager', pageTitle: 'Video Manager', user: req.session.user, videos });
+});
+
+app.get('/logs', async (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  let logs = ''; try { logs = await fs.readFile(process.env.LOG_FILE, 'utf-8'); } catch(e) { logs = 'No logs.'; }
+  res.render('logs', { title: 'System Logs', pageTitle: 'System Logs', user: req.session.user, logs });
+});
+
+app.get('/scheduler-view', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  res.render('scheduler-view', { title: 'Scheduler View', pageTitle: 'Scheduler View', user: req.session.user });
+});
+
+app.get('/control-panel', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  res.render('control-panel', { title: 'Control Panel', pageTitle: 'Control Panel', user: req.session.user });
+});
+
+app.get('/workflow/settings', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  const settingsPath = path.join(__dirname, 'config/workflow_settings.json');
+  let settings = { keyword: 'viral', mode: 'once' };
+  if (fs.existsSync(settingsPath)) settings = fs.readJsonSync(settingsPath);
+  res.render('workflow-settings', { title: 'Workflow Settings', pageTitle: 'Workflow Settings', user: req.session.user, settings });
+});
+
+app.get('/youtube/integrate', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  res.render('youtube-integrate', { title: 'YouTube Integration', pageTitle: 'YouTube Integration', user: req.session.user });
+});
+
+app.get('/payment', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+  res.render('subscription', { title: 'Subscription', pageTitle: 'Subscription', user: req.session.user, packages: [
+    { name: 'Basic', price: 50000 }, { name: 'Pro', price: 100000 }, { name: 'Premium', price: 200000 }
+  ] });
+});
+
+app.listen(process.env.PORT, () => console.log(`AUTOLIVE running on http://localhost:${process.env.PORT}`));

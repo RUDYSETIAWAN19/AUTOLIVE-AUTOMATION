@@ -1,0 +1,349 @@
+<%- include('partials/header', { title: 'Dashboard', pageTitle: 'Dashboard' }) %>
+
+<!-- Widget YouTube Connection (wajib di atas) -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert <%= user.youtube_connected ? 'alert-success' : 'alert-warning' %> d-flex justify-content-between align-items-center">
+            <div>
+                <% if (user.youtube_connected) { %>
+                    <i class="fab fa-youtube"></i> <%= t('youtubeConnected') %>: <strong><%= user.channel_id || 'Channel ID' %></strong>
+                <% } else { %>
+                    <i class="fab fa-youtube"></i> <%= t('youtubeNotConnected') %>
+                <% } %>
+            </div>
+            <a href="/youtube/integrate" class="btn btn-sm <%= user.youtube_connected ? 'btn-outline-primary' : 'btn-primary' %>">
+                <%= user.youtube_connected ? t('changeChannel') : t('connectYoutube') %>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Shortcut Links (grid) -->
+<div class="row mb-4">
+    <div class="col-12">
+        <h5 class="mb-3"><%= t('quickAccess') %></h5>
+        <div class="row g-3">
+            <div class="col-md-3 col-6">
+                <a href="/video-manager" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-video fa-2x mb-2"></i>
+                            <h6><%= t('videoManager') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/control-panel" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-play-circle fa-2x mb-2"></i>
+                            <h6><%= t('controlPanel') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/workflow/settings" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-cog fa-2x mb-2"></i>
+                            <h6><%= t('workflowSettings') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/scheduler-view" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                            <h6><%= t('schedulerView') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/logs" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-history fa-2x mb-2"></i>
+                            <h6><%= t('logs') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/payment" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-credit-card fa-2x mb-2"></i>
+                            <h6><%= t('subscription') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/profile" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-user fa-2x mb-2"></i>
+                            <h6><%= t('profile') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6">
+                <a href="/youtube/integrate" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fab fa-youtube fa-2x mb-2"></i>
+                            <h6><%= t('youtubeIntegration') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <% if (user.role === 'admin') { %>
+            <div class="col-md-3 col-6">
+                <a href="/admin" class="text-decoration-none">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                            <h6><%= t('adminPanel') %></h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Statistik -->
+<div class="row mb-4">
+    <% if (user.role === 'admin') { %>
+        <!-- Admin stats -->
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h6><%= t('totalUsers') %></h6>
+                    <h2><%= adminStats.totalUsers %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h6><%= t('totalVideos') %></h6>
+                    <h2><%= adminStats.totalVideos %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h6><%= t('totalTransactions') %></h6>
+                    <h2><%= adminStats.totalTransactions %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h6><%= t('totalRevenue') %></h6>
+                    <h2>Rp <%= adminStats.totalRevenue.toLocaleString() %></h2>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+        <!-- User stats -->
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h6><%= t('myVideos') %></h6>
+                    <h2><%= stats.total %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h6><%= t('successVideos') %></h6>
+                    <h2><%= stats.success %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h6><%= t('failedVideos') %></h6>
+                    <h2><%= stats.failed %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-white bg-secondary">
+                <div class="card-body">
+                    <h6><%= t('remainingActive') %></h6>
+                    <h2><%= remainingDays %> <small>hari</small></h2>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<!-- Khusus user: informasi paket & status automation -->
+<% if (user.role !== 'admin') { %>
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><%= t('currentPackage') %></h5>
+                <p><strong><%= user.package ? user.package.toUpperCase() : 'Free' %></strong> | <%= t('expired') %>: <%= new Date(user.trial_expired).toLocaleDateString() %></p>
+                <% if (remainingDays < 7 || user.package === 'free') { %>
+                    <a href="/payment" class="btn btn-warning btn-sm"><%= t('upgradeRenew') %></a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h5><%= t('automationStatus') %></h5>
+                <p id="automationRunningStatus" class="badge bg-secondary">Memuat...</p>
+                <div class="mt-2">
+                    <button id="startAutomationBtn" class="btn btn-success btn-sm" <%= (!user.youtube_connected || remainingDays <= 0) ? 'disabled' : '' %>><%= t('start') %></button>
+                    <button id="stopAutomationBtn" class="btn btn-danger btn-sm"><%= t('stop') %></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<% } %>
+
+<!-- Tabel data terbaru -->
+<div class="row">
+    <div class="col-12">
+        <h5 class="mb-3"><%= user.role === 'admin' ? t('recentUsersAndTransactions') : t('recentVideos') %></h5>
+        <% if (user.role === 'admin') { %>
+            <!-- Admin: dua tabel kecil -->
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><%= t('recentUsers') %></h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr><th>Nama</th><th>Email</th><th>Paket</th><th>Sisa Aktif</th><th>Aksi</th></tr>
+                            </thead>
+                            <tbody>
+                                <% adminStats.recentUsers.forEach(u => { %>
+                                <tr>
+                                    <td><%= u.name %></td>
+                                    <td><%= u.email %></td>
+                                    <td><%= u.package || 'free' %></td>
+                                    <td><%= Math.max(0, Math.ceil((new Date(u.trial_expired) - new Date()) / (1000*60*60*24))) %> hari</td>
+                                    <td><button class="btn btn-xs btn-primary extend-user" data-email="<%= u.email %>">Perpanjang</button></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <h6><%= t('recentTransactions') %></h6>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr><th>User</th><th>Paket</th><th>Amount</th><th>Tanggal</th></tr>
+                            </thead>
+                            <tbody>
+                                <% adminStats.recentTransactions.forEach(t => { %>
+                                <tr>
+                                    <td><%= t.user_email %></td>
+                                    <td><%= t.package %></td>
+                                    <td>Rp <%= t.amount.toLocaleString() %></td>
+                                    <td><%= new Date(t.date).toLocaleDateString() %></td>
+                                </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
+            <!-- User: daftar video terbaru -->
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr><th><%= t('title') %></th><th><%= t('youtubeUrl') %></th><th><%= t('status') %></th><th><%= t('uploadDate') %></th></tr>
+                    </thead>
+                    <tbody>
+                        <% videos.slice(0,5).forEach(v => { %>
+                        <tr>
+                            <td><%= v.title %></td>
+                            <td><a href="<%= v.youtube_url %>" target="_blank"><%= v.youtube_url %></a></td>
+                            <td><span class="badge <%= v.status === 'completed' ? 'bg-success' : 'bg-danger' %>"><%= v.status %></span></td>
+                            <td><%= new Date(v.uploaded_at).toLocaleString() %></td>
+                        </tr>
+                        <% }) %>
+                        <% if (videos.length === 0) { %>
+                        <tr><td colspan="4" class="text-center"><%= t('noVideosYet') %></td></tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    // Untuk automation status (user)
+    async function fetchAutomationStatus() {
+        const statusSpan = document.getElementById('automationRunningStatus');
+        if (!statusSpan) return;
+        try {
+            const res = await fetch('/workflow/status');
+            const data = await res.json();
+            if (data.running) {
+                statusSpan.innerText = 'Running';
+                statusSpan.className = 'badge bg-success';
+            } else {
+                statusSpan.innerText = 'Stopped';
+                statusSpan.className = 'badge bg-danger';
+            }
+        } catch(e) {}
+    }
+    fetchAutomationStatus();
+    setInterval(fetchAutomationStatus, 5000);
+
+    const startBtn = document.getElementById('startAutomationBtn');
+    const stopBtn = document.getElementById('stopAutomationBtn');
+    if (startBtn) {
+        startBtn.onclick = async () => {
+            await fetch('/workflow/start', { method: 'POST' });
+            fetchAutomationStatus();
+        };
+    }
+    if (stopBtn) {
+        stopBtn.onclick = async () => {
+            await fetch('/workflow/stop', { method: 'POST' });
+            fetchAutomationStatus();
+        };
+    }
+
+    // Extend user via admin (tombol perpanjang)
+    document.querySelectorAll('.extend-user').forEach(btn => {
+        btn.onclick = async (e) => {
+            const email = e.target.dataset.email;
+            const res = await fetch('/admin/extend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            if (res.ok) alert('User diperpanjang 30 hari');
+            else alert('Gagal');
+            location.reload();
+        };
+    });
+</script>
+<%- include('partials/footer') %>

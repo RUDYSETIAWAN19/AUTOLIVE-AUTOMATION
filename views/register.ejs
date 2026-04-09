@@ -1,0 +1,154 @@
+<%- include('partials/header', { title: 'Register', pageTitle: 'Register' }) %>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title text-center mb-4"><%= t('registerTitle') || 'Daftar Akun Baru' %></h4>
+                <% if (error) { %>
+                    <div class="alert alert-danger"><%= error %></div>
+                <% } %>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label class="form-label"><%= t('fullname') %> :</label>
+                        <input type="text" id="name" class="form-control form-control-custom" placeholder="<%= t('fullnamePlaceholder') %>" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><%= t('email') %> :</label>
+                        <input type="email" id="email" class="form-control form-control-custom" placeholder="nama@email.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><%= t('password') %> :</label>
+                        <input type="password" id="password" class="form-control form-control-custom" placeholder="••••••••" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><%= t('confirmPassword') %> :</label>
+                        <input type="password" id="confirmPassword" class="form-control form-control-custom" placeholder="<%= t('confirmPasswordPlaceholder') %>" required>
+                    </div>
+
+                    <!-- Pilihan Paket -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold"><%= t('choosePackage') %> :</label>
+                        <div class="row g-3" id="packageCards">
+                            <div class="col-md-4">
+                                <div class="card package-card h-100 border-primary" data-package="free">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Free</h5>
+                                        <p class="card-text"><%= t('freeDuration') %></p>
+                                        <p class="h6 text-success">Rp 0</p>
+                                        <div class="form-check">
+                                            <input class="form-check-input package-radio" type="radio" name="package" value="free" id="packageFree" checked>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card package-card h-100" data-package="pro">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Pro</h5>
+                                        <p class="card-text"><%= t('proDuration') %></p>
+                                        <p class="h6 text-primary">Rp 100.000</p>
+                                        <div class="form-check">
+                                            <input class="form-check-input package-radio" type="radio" name="package" value="pro" id="packagePro">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card package-card h-100" data-package="premium">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">Premium</h5>
+                                        <p class="card-text"><%= t('premiumDuration') %></p>
+                                        <p class="h6 text-primary">Rp 180.000</p>
+                                        <div class="form-check">
+                                            <input class="form-check-input package-radio" type="radio" name="package" value="premium" id="packagePremium">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-login w-100"><%= t('registerBtn') %></button>
+                </form>
+                <div class="register-link mt-3 text-center">
+                    <%= t('haveAccount') %> <a href="/login"><%= t('loginLink') %></a>
+                </div>
+                <div class="version-credit mt-3">
+                    <div><%= t('version') %></div>
+                    <div><%= t('credit') %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .package-card {
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 2px solid #dee2e6;
+    }
+    .package-card.selected {
+        border-color: #0d6efd;
+        background-color: #f8f9fa;
+    }
+    body.dark .package-card {
+        background-color: #1e293b;
+        border-color: #475569;
+    }
+    body.dark .package-card.selected {
+        border-color: #60a5fa;
+        background-color: #334155;
+    }
+    .package-radio {
+        display: none;
+    }
+</style>
+
+<script>
+    // Highlight card ketika dipilih
+    const cards = document.querySelectorAll('.package-card');
+    const radios = document.querySelectorAll('.package-radio');
+    cards.forEach(card => {
+        card.addEventListener('click', () => {
+            const radio = card.querySelector('.package-radio');
+            radio.checked = true;
+            cards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+        });
+    });
+    // Set default free selected
+    document.querySelector('.package-card[data-package="free"]').classList.add('selected');
+
+    // Submit form via AJAX
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirm = document.getElementById('confirmPassword').value;
+        const selectedPackage = document.querySelector('input[name="package"]:checked').value;
+
+        if (!name || !email || !password) {
+            alert('<%= t('fillAllFields') %>');
+            return;
+        }
+        if (password !== confirm) {
+            alert('<%= t('passwordMismatch') %>');
+            return;
+        }
+
+        const res = await fetch('/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password, package: selectedPackage })
+        });
+        const data = await res.json();
+        if (data.error) {
+            alert(data.error);
+        } else if (data.redirect) {
+            window.location.href = data.redirect;
+        }
+    });
+</script>
+<%- include('partials/footer') %>

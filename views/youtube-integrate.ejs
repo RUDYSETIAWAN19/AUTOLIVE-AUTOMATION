@@ -1,0 +1,131 @@
+<%- include('partials/header', { title: 'YouTube Integration', pageTitle: 'YouTube Integration' }) %>
+
+<div class="row">
+    <div class="col-md-7">
+        <!-- Status Card -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fab fa-youtube"></i> Status Koneksi YouTube</h5>
+                <% if (youtubeConnected && channelId) { %>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> Terhubung ke channel: <strong><%= channelId %></strong><br>
+                        <small>Token expires: <%= tokenExpiry ? new Date(tokenExpiry).toLocaleString() : 'N/A' %></small>
+                    </div>
+                    <form action="/youtube/disconnect" method="POST">
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-unlink"></i> Putuskan Koneksi</button>
+                    </form>
+                <% } else { %>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Belum terhubung ke YouTube. Klik tombol di bawah untuk login dengan Google.
+                    </div>
+                    <a href="/youtube/auth" class="btn btn-primary"><i class="fab fa-google"></i> Login dengan Google / YouTube</a>
+                <% } %>
+            </div>
+        </div>
+        
+        <!-- Panduan Mendapatkan Data (accordion) -->
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <i class="fas fa-question-circle"></i> Panduan Mendapatkan Kredensial YouTube API
+            </div>
+            <div class="card-body">
+                <div class="accordion" id="guideAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step1">
+                                Langkah 1: Buat Project di Google Cloud Console
+                            </button>
+                        </h2>
+                        <div id="step1" class="accordion-collapse collapse" data-bs-parent="#guideAccordion">
+                            <div class="accordion-body">
+                                1. Buka <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a><br>
+                                2. Buat project baru: <code>AUTOLIVE Automation</code><br>
+                                3. Aktifkan <strong>YouTube Data API v3</strong> (cari di library API)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step2">
+                                Langkah 2: Buat Kredensial OAuth 2.0
+                            </button>
+                        </h2>
+                        <div id="step2" class="accordion-collapse collapse" data-bs-parent="#guideAccordion">
+                            <div class="accordion-body">
+                                1. Pergi ke <strong>APIs & Services → Credentials</strong><br>
+                                2. Klik <strong>+ CREATE CREDENTIALS → OAuth client ID</strong><br>
+                                3. Pilih <strong>Web application</strong><br>
+                                4. Nama: <code>AUTOLIVE Web</code><br>
+                                5. <strong>Authorized redirect URIs</strong>:<br>
+                                <code>http://localhost:3000/youtube/callback</code><br>
+                                6. Copy <strong>Client ID</strong> dan <strong>Client Secret</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#step3">
+                                Langkah 3: Dapatkan Channel ID
+                            </button>
+                        </h2>
+                        <div id="step3" class="accordion-collapse collapse" data-bs-parent="#guideAccordion">
+                            <div class="accordion-body">
+                                1. Buka YouTube.com<br>
+                                2. Klik foto profil → <strong>Pengaturan</strong> → <strong>Channel</strong> → <strong>Status dan fitur</strong><br>
+                                3. Lihat <strong>ID Channel</strong> (mulai "UC...")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5">
+        <!-- Persyaratan Upload -->
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="fas fa-info-circle"></i> Persyaratan Upload YouTube Shorts
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-clock"></i> Durasi maksimal: <strong>60 detik</strong></li>
+                    <li><i class="fas fa-arrows-alt"></i> Rasio: <strong>9:16 (vertical)</strong></li>
+                    <li><i class="fas fa-copyright"></i> Konten <strong>bebas copyright</strong></li>
+                    <li><i class="fas fa-check-circle"></i> Channel harus <strong>terverifikasi</strong></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Data API yang Digunakan -->
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <i class="fas fa-code"></i> Data API yang Disimpan
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr><td>Client ID:</td><td><code><%= process.env.YOUTUBE_CLIENT_ID ? '✓ Tersimpan' : '✗ Belum' %></code></td></tr>
+                    <tr><td>Redirect URI:</td><td><code><%= process.env.YOUTUBE_REDIRECT_URI %></code></td></tr>
+                    <tr><td>Scope:</td><td><code>youtube.upload</code></td></tr>
+                    <tr><td>Channel ID:</td><td><code><%= channelId || 'Belum' %></code></td></tr>
+                </table>
+                <small class="text-muted">Token OAuth disimpan secara aman di database.</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tampilkan notifikasi jika ada error/success dari query param
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success') === 'connected') {
+        alert('Berhasil terhubung ke YouTube!');
+    }
+    if (urlParams.get('error') === 'oauth_failed') {
+        alert('Gagal login OAuth. Silakan coba lagi.');
+    }
+    if (urlParams.get('error') === 'token_exchange_failed') {
+        alert('Gagal menukar token. Periksa Client ID dan Client Secret.');
+    }
+</script>
+<%- include('partials/footer') %>

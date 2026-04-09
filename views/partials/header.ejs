@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="<%= currentLang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title><%= title %> | AUTOLIVE AUTOMATION</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #e6f4ff 0%, #b8e1fc 100%);
+            transition: background 0.3s;
+        }
+        body.dark {
+            background: linear-gradient(145deg, #0b1120 0%, #111827 100%);
+        }
+        /* Header card (sama seperti login) */
+        .header-card {
+            max-width: 1200px;
+            margin: 20px auto 0;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem 2rem 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+        body.dark .header-card {
+            background: rgba(18, 25, 45, 0.95);
+            color: #e2e8f0;
+        }
+        .login-header {
+            padding: 16px 20px 12px;
+            text-align: center;
+            background: linear-gradient(105deg, #1e3a8a, #3b82f6);
+            color: white;
+        }
+        body.dark .login-header {
+            background: linear-gradient(105deg, #0f172a, #1e293b);
+        }
+        .main-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .slogan {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 8px;
+        }
+        .datetime {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+        .header-controls button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 30px;
+            padding: 3px 12px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        hr.divider-header {
+            margin: 8px 0 0;
+            border-top: 2px solid rgba(255,255,255,0.3);
+        }
+        /* User info bar */
+        .user-info-bar {
+            background: rgba(0,0,0,0.05);
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        body.dark .user-info-bar {
+            background: rgba(255,255,255,0.05);
+            border-bottom-color: #334155;
+        }
+        .user-name {
+            font-weight: 600;
+        }
+        .user-role {
+            background: #2563eb;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+        }
+        .user-expiry {
+            color: #e67e22;
+        }
+        /* Page title bar */
+        .page-title-bar {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.5);
+            border-bottom: 2px solid #3b82f6;
+        }
+        body.dark .page-title-bar {
+            background: rgba(0,0,0,0.3);
+            border-bottom-color: #60a5fa;
+        }
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        /* Main content container */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 0 0 2rem 2rem;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        body.dark .main-content {
+            background: rgba(18, 25, 45, 0.95);
+        }
+        /* Footer rules (optional, bisa seragam) */
+        .footer-rules-global {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 1rem;
+            padding: 12px 20px;
+            font-size: 0.65rem;
+            text-align: center;
+        }
+        body.dark .footer-rules-global {
+            background: rgba(0,0,0,0.5);
+        }
+        @media (max-width: 768px) {
+            .user-info-bar { flex-direction: column; gap: 5px; align-items: flex-start; }
+            .page-title { font-size: 1rem; }
+            .main-content { padding: 15px; }
+        }
+    </style>
+</head>
+<body class="<%= theme === 'dark' ? 'dark' : '' %>">
+<div class="header-card">
+    <div class="login-header">
+        <div class="main-title">AUTOLIVE AUTOMATION</div>
+        <div class="slogan"><%= t('slogan') %></div>
+        <div class="header-controls">
+            <span class="datetime" id="liveDateTime"></span>
+            <button id="themeToggleBtn"><i class="fas <%= theme === 'dark' ? 'fa-sun' : 'fa-moon' %>"></i> <%= theme === 'dark' ? 'Light' : 'Dark' %></button>
+            <button id="langToggleBtn"><i class="fas fa-globe"></i> <%= currentLang === 'id' ? 'ID' : 'EN' %></button>
+        </div>
+        <hr class="divider-header">
+    </div>
+    <div class="user-info-bar">
+        <div class="user-name"><i class="fas fa-user-circle"></i> <%= user.name %> <span class="user-role"><%= user.role === 'admin' ? 'Admin' : 'User' %></span></div>
+        <div class="user-expiry"><i class="far fa-clock"></i> Masa aktif: <%= remainingDays %> hari (<%= remainingHours %> jam)</div>
+        <div><a href="/logout" class="btn btn-sm btn-outline-danger" style="padding: 2px 8px; font-size:0.7rem;"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    </div>
+    <div class="page-title-bar">
+        <div class="page-title"><%= pageTitle %></div>
+    </div>
+</div>
+<div class="main-content">
+EOF# Buat folder partials jika belum ada
+mkdir -p views/partials
+
+# Buat file header.ejs (partial header untuk semua halaman)
+cat > views/partials/header.ejs << 'EOF'
+<!DOCTYPE html>
+<html lang="<%= currentLang %>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title><%= title %> | AUTOLIVE AUTOMATION</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system;
+            min-height: 100vh;
+            background: linear-gradient(145deg, #e6f4ff 0%, #b8e1fc 100%);
+            transition: background 0.3s;
+        }
+        body.dark {
+            background: linear-gradient(145deg, #0b1120 0%, #111827 100%);
+        }
+        /* Header card (sama seperti login) */
+        .header-card {
+            max-width: 1200px;
+            margin: 20px auto 0;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem 2rem 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: background 0.3s;
+        }
+        body.dark .header-card {
+            background: rgba(18, 25, 45, 0.95);
+            color: #e2e8f0;
+        }
+        .login-header {
+            padding: 16px 20px 12px;
+            text-align: center;
+            background: linear-gradient(105deg, #1e3a8a, #3b82f6);
+            color: white;
+        }
+        body.dark .login-header {
+            background: linear-gradient(105deg, #0f172a, #1e293b);
+        }
+        .main-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .slogan {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        .header-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 8px;
+        }
+        .datetime {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 3px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+        .header-controls button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 30px;
+            padding: 3px 12px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        hr.divider-header {
+            margin: 8px 0 0;
+            border-top: 2px solid rgba(255,255,255,0.3);
+        }
+        /* User info bar */
+        .user-info-bar {
+            background: rgba(0,0,0,0.05);
+            padding: 8px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        body.dark .user-info-bar {
+            background: rgba(255,255,255,0.05);
+            border-bottom-color: #334155;
+        }
+        .user-name {
+            font-weight: 600;
+        }
+        .user-role {
+            background: #2563eb;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+        }
+        .user-expiry {
+            color: #e67e22;
+        }
+        /* Page title bar */
+        .page-title-bar {
+            padding: 12px 20px;
+            background: rgba(255,255,255,0.5);
+            border-bottom: 2px solid #3b82f6;
+        }
+        body.dark .page-title-bar {
+            background: rgba(0,0,0,0.3);
+            border-bottom-color: #60a5fa;
+        }
+        .page-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0;
+        }
+        /* Main content container */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 0 0 2rem 2rem;
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        body.dark .main-content {
+            background: rgba(18, 25, 45, 0.95);
+        }
+        /* Footer rules (optional, bisa seragam) */
+        .footer-rules-global {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 1rem;
+            padding: 12px 20px;
+            font-size: 0.65rem;
+            text-align: center;
+        }
+        body.dark .footer-rules-global {
+            background: rgba(0,0,0,0.5);
+        }
+        @media (max-width: 768px) {
+            .user-info-bar { flex-direction: column; gap: 5px; align-items: flex-start; }
+            .page-title { font-size: 1rem; }
+            .main-content { padding: 15px; }
+        }
+    </style>
+</head>
+<body class="<%= theme === 'dark' ? 'dark' : '' %>">
+<div class="header-card">
+    <div class="login-header">
+        <div class="main-title">AUTOLIVE AUTOMATION</div>
+        <div class="slogan"><%= t('slogan') %></div>
+        <div class="header-controls">
+            <span class="datetime" id="liveDateTime"></span>
+            <button id="themeToggleBtn"><i class="fas <%= theme === 'dark' ? 'fa-sun' : 'fa-moon' %>"></i> <%= theme === 'dark' ? 'Light' : 'Dark' %></button>
+            <button id="langToggleBtn"><i class="fas fa-globe"></i> <%= currentLang === 'id' ? 'ID' : 'EN' %></button>
+        </div>
+        <hr class="divider-header">
+    </div>
+    <div class="user-info-bar">
+        <div class="user-name"><i class="fas fa-user-circle"></i> <%= user.name %> <span class="user-role"><%= user.role === 'admin' ? 'Admin' : 'User' %></span></div>
+        <div class="user-expiry"><i class="far fa-clock"></i> Masa aktif: <%= remainingDays %> hari (<%= remainingHours %> jam)</div>
+        <div><a href="/logout" class="btn btn-sm btn-outline-danger" style="padding: 2px 8px; font-size:0.7rem;"><i class="fas fa-sign-out-alt"></i> Logout</a></div>
+    </div>
+    <div class="page-title-bar">
+        <div class="page-title"><%= pageTitle %></div>
+    </div>
+</div>
+<div class="main-content">
